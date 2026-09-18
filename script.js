@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = "AQ.Ab8RN6LdCWZTTZbIG_Zn1MaaFeUa4UYmfvo4BPGYvJyau5a2YA";
+const GEMINI_API_KEY = "gemini key";
 
 const chatMessages = document.getElementById("chat-messages");
 const chatForm = document.getElementById("chat-form");
