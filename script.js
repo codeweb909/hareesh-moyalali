@@ -3,7 +3,7 @@
 // ==========================================
 
 const CHATBOT_BACKEND_URL =
-  "https://script.google.com/macros/s/AKfycbwGRGqpD5_zlpa7rZHlV6dM4X3SFLNkAvg2lX-i5k32SXK1Lq7ov3SeQiTb548aIV5u/exec";
+  "https://script.google.com/macros/s/AKfycbwjMy4IlpoRsBDNYzN5E5Docc-HrbdrIwjkS8NE2c6gKyHlK3t4fkSBK0a8SQbd1-EI/exec";
 
 
 // ------------------------------------------
@@ -21,14 +21,20 @@ if (menuButton && nav) {
 
 
 // ------------------------------------------
-// Chatbot
+// Chatbot elements
 // ------------------------------------------
 
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const chatMessages = document.getElementById("chat-messages");
 
+
+// ------------------------------------------
+// Add message
+// ------------------------------------------
+
 function addChatMessage(text, sender) {
+
   if (!chatMessages) return;
 
   const message = document.createElement("div");
@@ -46,31 +52,87 @@ function addChatMessage(text, sender) {
 }
 
 
-async function askHareeshAI(message) {
+// ------------------------------------------
+// Ask AI using JSONP
+// ------------------------------------------
 
-  const response = await fetch(CHATBOT_BACKEND_URL, {
-    method: "POST",
+function askHareeshAI(message) {
 
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
+  return new Promise((resolve, reject) => {
 
-    body: JSON.stringify({
-      message: message
-    })
+    const callbackName =
+      "hareeshAI_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 10000);
+
+    const script = document.createElement("script");
+
+    const timeout = setTimeout(() => {
+
+      cleanup();
+
+      reject(new Error("AI request timed out."));
+
+    }, 30000);
+
+
+    function cleanup() {
+
+      clearTimeout(timeout);
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
+      try {
+        delete window[callbackName];
+      } catch (e) {
+        window[callbackName] = undefined;
+      }
+    }
+
+
+    window[callbackName] = function(data) {
+
+      cleanup();
+
+      if (data && data.error) {
+
+        reject(new Error(data.error));
+
+        return;
+      }
+
+      if (data && data.reply) {
+
+        resolve(data.reply);
+
+        return;
+      }
+
+      reject(new Error("Invalid AI response."));
+    };
+
+
+    script.onerror = function() {
+
+      cleanup();
+
+      reject(new Error("Unable to connect to Hareesh AI."));
+    };
+
+
+    script.src =
+      CHATBOT_BACKEND_URL +
+      "?message=" +
+      encodeURIComponent(message) +
+      "&callback=" +
+      callbackName;
+
+    document.body.appendChild(script);
+
   });
-
-  if (!response.ok) {
-    throw new Error("Backend request failed");
-  }
-
-  const data = await response.json();
-
-  if (data.error) {
-    throw new Error(data.error);
-  }
-
-  return data.reply;
 }
 
 
@@ -88,23 +150,29 @@ if (chatForm) {
 
     if (!message) return;
 
+
     addChatMessage(message, "user");
 
     chatInput.value = "";
+
 
     const loading = document.createElement("div");
 
     loading.className = "chat-message bot";
 
-    loading.textContent = "Hareesh AI is thinking...";
+    loading.textContent =
+      "Hareesh AI is thinking...";
 
     chatMessages.appendChild(loading);
 
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
 
     try {
 
-      const reply = await askHareeshAI(message);
+      const reply =
+        await askHareeshAI(message);
 
       loading.remove();
 
@@ -128,25 +196,28 @@ if (chatForm) {
 // Quick question buttons
 // ------------------------------------------
 
-document.querySelectorAll(".quick-question").forEach(button => {
+document
+  .querySelectorAll(".quick-question")
+  .forEach(button => {
 
-  button.addEventListener("click", function() {
+    button.addEventListener("click", function() {
 
-    const question = this.textContent.trim();
+      const question =
+        this.textContent.trim();
 
-    if (chatInput) {
+      if (chatInput && chatForm) {
 
-      chatInput.value = question;
+        chatInput.value = question;
 
-      chatForm.dispatchEvent(
-        new Event("submit", {
-          bubbles: true,
-          cancelable: true
-        })
-      );
+        chatForm.dispatchEvent(
+          new Event("submit", {
+            bubbles: true,
+            cancelable: true
+          })
+        );
 
-    }
+      }
+
+    });
 
   });
-
-});
