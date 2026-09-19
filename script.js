@@ -1,85 +1,152 @@
-const GEMINI_API_KEY = "gemini key";
+// ==========================================
+// HAREESH MOYALALI AI CHATBOT
+// ==========================================
 
-const chatMessages = document.getElementById("chat-messages");
+const CHATBOT_BACKEND_URL =
+  "https://script.google.com/macros/s/AKfycbzWjy384yTMvhPx7vD0K2YFCJzOO_6L1Cya3x9PuklzGFwczoKKOrZM8INt9uWlq76D/exec";
+
+
+// ------------------------------------------
+// Mobile menu
+// ------------------------------------------
+
+const menuButton = document.querySelector(".menu-toggle");
+const nav = document.querySelector("nav");
+
+if (menuButton && nav) {
+  menuButton.addEventListener("click", () => {
+    nav.classList.toggle("active");
+  });
+}
+
+
+// ------------------------------------------
+// Chatbot
+// ------------------------------------------
+
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
+const chatMessages = document.getElementById("chat-messages");
 
-function addMessage(message, sender) {
-  const messageElement = document.createElement("div");
-  messageElement.className = `chat-message ${sender}`;
-  messageElement.textContent = message;
-  chatMessages.appendChild(messageElement);
+function addChatMessage(text, sender) {
+  if (!chatMessages) return;
+
+  const message = document.createElement("div");
+
+  message.className =
+    sender === "user"
+      ? "chat-message user"
+      : "chat-message bot";
+
+  message.textContent = text;
+
+  chatMessages.appendChild(message);
+
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-async function askGemini(userMessage) {
-  const endpoint =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" +
-    GEMINI_API_KEY;
 
-  const response = await fetch(endpoint, {
+async function askHareeshAI(message) {
+
+  const response = await fetch(CHATBOT_BACKEND_URL, {
     method: "POST",
+
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "text/plain;charset=utf-8"
     },
+
     body: JSON.stringify({
-      system_instruction: {
-        parts: [
-          {
-            text:
-              "You are Hareesh Moyalali AI, the friendly chatbot for a fictional Kerala political satire website. Be humorous, polite, and clear that Hareesh Moyalali is fictional satire. Do not present fictional website claims as real political facts."
-          }
-        ]
-      },
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: userMessage
-            }
-          ]
-        }
-      ]
+      message: message
     })
   });
 
   if (!response.ok) {
-    throw new Error("Gemini API request failed");
+    throw new Error("Backend request failed");
   }
 
   const data = await response.json();
 
-  return (
-    data.candidates?.[0]?.content?.parts?.[0]?.text ||
-    "Sorry, I could not generate a response."
-  );
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.reply;
 }
+
+
+// ------------------------------------------
+// Send message
+// ------------------------------------------
 
 if (chatForm) {
-  chatForm.addEventListener("submit", async function (event) {
+
+  chatForm.addEventListener("submit", async function(event) {
+
     event.preventDefault();
 
-    const userMessage = chatInput.value.trim();
+    const message = chatInput.value.trim();
 
-    if (!userMessage) return;
+    if (!message) return;
 
-    addMessage(userMessage, "user");
+    addChatMessage(message, "user");
+
     chatInput.value = "";
 
-    const loadingMessage = document.createElement("div");
-    loadingMessage.className = "chat-message bot";
-    loadingMessage.textContent = "Thinking...";
-    chatMessages.appendChild(loadingMessage);
+    const loading = document.createElement("div");
+
+    loading.className = "chat-message bot";
+
+    loading.textContent = "Hareesh AI is thinking...";
+
+    chatMessages.appendChild(loading);
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-      const reply = await askGemini(userMessage);
-      loadingMessage.remove();
-      addMessage(reply, "bot");
+
+      const reply = await askHareeshAI(message);
+
+      loading.remove();
+
+      addChatMessage(reply, "bot");
+
     } catch (error) {
-      loadingMessage.textContent =
-        "Sorry, the AI is temporarily unavailable. Please try again.";
+
       console.error(error);
+
+      loading.textContent =
+        "Sorry, Hareesh AI is temporarily unavailable. Please try again.";
+
     }
+
   });
+
 }
+
+
+// ------------------------------------------
+// Quick question buttons
+// ------------------------------------------
+
+document.querySelectorAll(".quick-question").forEach(button => {
+
+  button.addEventListener("click", function() {
+
+    const question = this.textContent.trim();
+
+    if (chatInput) {
+
+      chatInput.value = question;
+
+      chatForm.dispatchEvent(
+        new Event("submit", {
+          bubbles: true,
+          cancelable: true
+        })
+      );
+
+    }
+
+  });
+
+});
