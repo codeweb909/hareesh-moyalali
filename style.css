@@ -178,3 +178,77 @@ body { margin: 0; color: var(--ink); background: var(--cream); font-family: "DM 
     width: 100%;
   }
 }
+/* ================================
+   CONTACT DROPDOWN MENU
+================================ */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dropdown-btn:hover {
+  color: var(--gold);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--deep-green);
+  border: 1px solid var(--gold);
+  min-width: 190px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.4);
+  border-radius: 6px;
+  z-index: 1000;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+/* Reveal dropdown when hovering over container */
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+  display: block;
+}
+
+.dropdown-item {
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.dropdown-item + .dropdown-item {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+.dropdown-item strong {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-item a {
+  color: white !important;
+  text-decoration: none;
+  font-size: 0.88rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.dropdown-item a:hover {
+  color: var(--gold) !important;
+}
