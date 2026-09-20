@@ -74,7 +74,7 @@ function askHareeshAI(message) {
 
       reject(new Error("AI request timed out."));
 
-    }, 30000);
+    }, 60000);
 
 
     function cleanup() {
