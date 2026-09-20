@@ -3,7 +3,7 @@
 // ==========================================
 
 const CHATBOT_BACKEND_URL =
-  "https://script.google.com/macros/s/AKfycbwjMy4IlpoRsBDNYzN5E5Docc-HrbdrIwjkS8NE2c6gKyHlK3t4fkSBK0a8SQbd1-EI/exec";
+  "https://script.google.com/macros/s/AKfycbygleUGW3rhA6IJn2XCKF4hR776h2fyNQgEI258QFpy6u6vYsvSOZXRLkRKqUAPSvd0/exec;
 
 
 // ------------------------------------------
