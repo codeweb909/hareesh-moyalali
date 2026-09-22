@@ -4,7 +4,39 @@
 
 const CHATBOT_BACKEND_URL =
   "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
+function speakMalayalam(text) {
+  if (!("speechSynthesis" in window)) return;
 
+  window.speechSynthesis.cancel();
+
+  const voices = window.speechSynthesis.getVoices();
+
+  const malayalamVoices = voices.filter(voice =>
+    voice.lang && voice.lang.toLowerCase().startsWith("ml")
+  );
+
+  const maleVoice = malayalamVoices.find(voice =>
+    /male|man|moorthy|ravi|kumar|raj|arun|anil|suresh|krishnan/i.test(
+      voice.name
+    )
+  );
+
+  const selectedVoice =
+    maleVoice || malayalamVoices[0];
+
+  const speech = new SpeechSynthesisUtterance(text);
+
+  speech.lang = "ml-IN";
+  speech.rate = 0.88;
+  speech.pitch = 0.82;
+  speech.volume = 1;
+
+  if (selectedVoice) {
+    speech.voice = selectedVoice;
+  }
+
+  window.speechSynthesis.speak(speech);
+}
 // ------------------------------------------
 // Mobile menu
 // ------------------------------------------
@@ -177,17 +209,6 @@ if (chatForm) {
 
       addChatMessage(reply, "bot");
 
-if ("speechSynthesis" in window) {
-  window.speechSynthesis.cancel();
-
-  const voice = new SpeechSynthesisUtterance(reply);
-  voice.lang = "ml-IN";
-  voice.rate = 0.9;
-  voice.pitch = 0.9;
-  voice.volume = 1;
-
-  window.speechSynthesis.speak(voice);
-}
     } catch (error) {
 
       console.error(error);
