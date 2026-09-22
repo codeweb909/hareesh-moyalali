@@ -209,6 +209,9 @@ if (chatForm) {
 
       addChatMessage(reply, "bot");
 
+if ("speechSynthesis" in window) {
+  speakMalayalam(reply);
+}
     } catch (error) {
 
       console.error(error);
