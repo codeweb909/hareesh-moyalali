@@ -5,7 +5,6 @@
 const CHATBOT_BACKEND_URL =
   "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
 
-
 // ------------------------------------------
 // Mobile menu
 // ------------------------------------------
@@ -178,6 +177,17 @@ if (chatForm) {
 
       addChatMessage(reply, "bot");
 
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.cancel();
+
+  const voice = new SpeechSynthesisUtterance(reply);
+  voice.lang = "ml-IN";
+  voice.rate = 0.9;
+  voice.pitch = 0.9;
+  voice.volume = 1;
+
+  window.speechSynthesis.speak(voice);
+}
     } catch (error) {
 
       console.error(error);
