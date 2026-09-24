@@ -4,8 +4,6 @@
 
 const CHATBOT_BACKEND_URL =
   "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
-
-
 // =====================================================
 // MALAYALAM VOICE
 // =====================================================
