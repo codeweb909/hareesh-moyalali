@@ -42,38 +42,44 @@ function speakMalayalam(text) {
 function getFixedAnswer(message) {
   const text = message.toLowerCase().trim();
 
+  // Moyalai marriage date
   if (
     text.includes("when is moyalai marriage") ||
     text.includes("when is moyalali marriage") ||
-    text.includes("moyalai marriage")
+    text.includes("moyalai marriage") ||
+    text.includes("marriage date")
   ) {
     return "Moyalai's marriage is on December 12.";
   }
 
+  // Marriage location
   if (
     text.includes("where is marriage") ||
     text.includes("marriage location") ||
     text.includes("where is the marriage")
   ) {
-    return 'The marriage location is here: <a href="https://maps.app.goo.gl/JmXvYvpREPR61rcu8" target="_blank">Open Google Maps</a>';
+    return "Marriage location: https://maps.app.goo.gl/JmXvYvpREPR61rcu8";
   }
 
+  // Bachelor party date
   if (
     text.includes("when is bachelor party") ||
-    text.includes("bachelor party")
+    text.includes("bachelor party date")
   ) {
     return "The bachelor party is from December 6 to December 12.";
   }
 
+  // Bachelor party location
   if (
     text.includes("where is bachelor party") ||
-    text.includes("where is it")
+    text.includes("bachelor party location")
   ) {
     return "The bachelor party will be at a private beach in Alappuzha.";
   }
 
   return null;
 }
+
 // ------------------------------------------
 // Mobile menu
 // ------------------------------------------
@@ -220,8 +226,10 @@ if (chatForm) {
 const fixedReply = getFixedAnswer(message);
 
 if (fixedReply) {
+  addChatMessage(message, "user");
   addChatMessage(fixedReply, "bot");
-  speakMalayalam(fixedReply.replace(/<[^>]*>/g, ""));
+  speakMalayalam(fixedReply);
+  chatInput.value = "";
   return;
 }
 
