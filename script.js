@@ -152,7 +152,30 @@ function getFixedAnswer(message) {
         "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
     };
   }
+// --------------------------------------------------
+// BACHELOR PARTY
+// --------------------------------------------------
 
+if (
+  text.includes("bachelor party") ||
+  text.includes("bachelor") ||
+  text.includes("bachelor party plan") ||
+  text.includes("plan for bachelor") ||
+  text.includes("party plan") ||
+  text.includes("ബാച്ചിലർ പാർട്ടി") ||
+  text.includes("ബാച്ചിലർ") ||
+  text.includes("പാർട്ടി എന്താ പ്ലാൻ") ||
+  text.includes("party entha plan") ||
+  text.includes("party plan entha")
+) {
+  return {
+    text:
+      "Da da ninne okke otha nerathe Shanku kanda atra",
+
+    speech:
+      "ഡാ ഡാ, നിന്നെ ഒക്കെ ഒത്ത നേരത്തെ ശങ്കു കണ്ട അത്ര."
+  };
+}
 
   // ----------------------------------------
   // BACHELOR PARTY DATE
