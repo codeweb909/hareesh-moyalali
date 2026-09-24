@@ -4,15 +4,7 @@
 
 const CHATBOT_BACKEND_URL =
   "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
-const fixedReply = getFixedAnswer(message);
 
-if (fixedReply) {
-  addChatMessage(fixedReply, "bot");
-
-  // Speak the answer if voice is enabled
-  speakMalayalam(fixedReply.replace(/<[^>]*>/g, ""));
-
-  return;
 }
 function speakMalayalam(text) {
   if (!("speechSynthesis" in window)) return;
@@ -225,7 +217,13 @@ if (chatForm) {
     const message = chatInput.value.trim();
 
     if (!message) return;
+const fixedReply = getFixedAnswer(message);
 
+if (fixedReply) {
+  addChatMessage(fixedReply, "bot");
+  speakMalayalam(fixedReply.replace(/<[^>]*>/g, ""));
+  return;
+}
 
     addChatMessage(message, "user");
 
