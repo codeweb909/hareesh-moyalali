@@ -2,17 +2,12 @@
 // HAREESH MOYALALI AI CHATBOT
 // ==========================================
 
-
-// ==========================================
-// GOOGLE APPS SCRIPT BACKEND
-// ==========================================
-
 const CHATBOT_BACKEND_URL =
   "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
 
 
 // ==========================================
-// MALAYALAM VOICE
+// MALAYALAM SPEECH
 // ==========================================
 
 function speakMalayalam(text) {
@@ -23,207 +18,240 @@ function speakMalayalam(text) {
 
   const speak = () => {
 
-    const voices =
-      window.speechSynthesis.getVoices();
+    const voices = window.speechSynthesis.getVoices();
 
-    const malayalamVoices =
-      voices.filter(voice =>
-        voice.lang &&
-        voice.lang.toLowerCase().startsWith("ml")
-      );
+    const malayalamVoices = voices.filter(voice =>
+      voice.lang &&
+      voice.lang.toLowerCase().startsWith("ml")
+    );
 
-    const maleVoice =
-      malayalamVoices.find(voice =>
-        /male|man|moorthy|ravi|kumar|raj|arun|anil|suresh|krishnan/i
-          .test(voice.name)
-      );
-
-    const selectedVoice =
-      maleVoice || malayalamVoices[0];
-
-    const speech =
-      new SpeechSynthesisUtterance(text);
+    const speech = new SpeechSynthesisUtterance(text);
 
     speech.lang = "ml-IN";
     speech.rate = 0.88;
     speech.pitch = 0.82;
     speech.volume = 1;
 
-    if (selectedVoice) {
-      speech.voice = selectedVoice;
+    if (malayalamVoices.length > 0) {
+      speech.voice = malayalamVoices[0];
     }
 
     window.speechSynthesis.speak(speech);
   };
 
+  speak();
 
-  // Some mobile browsers load voices asynchronously
-  const voices =
-    window.speechSynthesis.getVoices();
+  // Some Android browsers load voices after the first call
+  setTimeout(() => {
 
-  if (voices.length) {
-    speak();
-  } else {
-
-    window.speechSynthesis.onvoiceschanged = () => {
+    if (!window.speechSynthesis.speaking) {
       speak();
-    };
+    }
 
-  }
+  }, 500);
+}
+
+
+// ==========================================
+// NORMALIZE USER QUESTION
+// ==========================================
+
+function normalizeQuestion(message) {
+
+  return message
+    .toLowerCase()
+    .trim()
+    .replace(/[?!.,;:'"’‘“”]/g, "")
+    .replace(/\s+/g, " ");
 }
 
 
 // ==========================================
 // FIXED ANSWERS
-// These work even if AI backend fails
 // ==========================================
 
 function getFixedAnswer(message) {
 
-  // Normalize question
-  const text = message
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .replace(/\s+/g, " ");
+  const text = normalizeQuestion(message);
 
 
-  // ========================================
+  // ----------------------------------------
   // MARRIAGE DATE
-  // ========================================
+  // ----------------------------------------
 
   const marriageWords = [
     "marriage",
     "wedding",
     "kalyanam",
-    "kalyan",
-    "vivaham",
-    "vivaha"
+    "kalyana",
+    "കല്യാണം",
+    "വിവാഹം"
   ];
 
-  const whenWords = [
+  const dateWords = [
     "when",
     "eppo",
+    "eppozha",
+    "eppozhanu",
     "enna",
+    "when is",
     "date",
-    "ethu",
-    "which"
+    "എപ്പോൾ",
+    "എന്നാ",
+    "എപ്പോഴാണ്"
   ];
 
-
-  const isMarriageQuestion =
-    marriageWords.some(word =>
-      text.includes(word)
-    ) &&
-    whenWords.some(word =>
-      text.includes(word)
-    );
-
+  const asksMarriageDate =
+    marriageWords.some(word => text.includes(word)) &&
+    dateWords.some(word => text.includes(word));
 
   if (
-    isMarriageQuestion ||
-
-    text.includes("moyalai marriage") ||
-    text.includes("moyalali marriage") ||
-
-    text.includes("moyalai wedding") ||
-    text.includes("moyalali wedding") ||
-
-    text.includes("marriage date") ||
-    text.includes("wedding date") ||
-
-    text === "when is marriage" ||
-    text === "marriage eppo" ||
-    text === "kalyanam eppo" ||
-    text === "kalyanam enna"
+    asksMarriageDate ||
+    text === "marriage" ||
+    text === "wedding" ||
+    text === "kalyanam"
   ) {
 
-    return "Moyalai's marriage is on December 12.";
+    return {
+      text:
+        "ആഹാ! ഹരീഷ് മൊയലാലിയുടെ കല്യാണം ഡിസംബർ 12-നാണ്. 💍",
+
+      speech:
+        "ആഹാ! ഹരീഷ് മൊയലാലിയുടെ കല്യാണം ഡിസംബർ പന്ത്രണ്ടാം തീയതിയാണ്."
+    };
   }
 
 
-  // ========================================
-  // MARRIAGE LOCATION
-  // ========================================
+  // ----------------------------------------
+  // WEDDING LOCATION
+  // ----------------------------------------
 
   if (
-
+    text.includes("location") ||
     text.includes("where is marriage") ||
     text.includes("where is the marriage") ||
-
-    text.includes("where is wedding") ||
-    text.includes("where is the wedding") ||
-
-    text.includes("marriage location") ||
     text.includes("wedding location") ||
-
-    text.includes("kalyanam evide") ||
-    text.includes("kalyanam evida") ||
-
-    text.includes("marriage evide") ||
-    text.includes("marriage evida")
-
+    text.includes("marriage location") ||
+    text.includes("wedding venue") ||
+    text.includes("marriage venue") ||
+    text.includes("venue") ||
+    text.includes("where wedding") ||
+    text === "where" ||
+    text === "where is it" ||
+    text === "സ്ഥലം" ||
+    text.includes("evide") ||
+    text.includes("evideya") ||
+    text.includes("kalyanam evide")
   ) {
 
-    return `
-      The marriage location is here:
-      <br><br>
-      <a
-        href="https://maps.app.goo.gl/JmXvYvpREPR61rcu8"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        📍 Open Google Maps
-      </a>
-    `;
+    return {
+      text:
+        'Wedding location: <a href="https://maps.app.goo.gl/JmXvYvpREPR61rcu8" target="_blank" rel="noopener noreferrer">Open Google Maps 📍</a>',
+
+      speech:
+        "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
+    };
   }
 
 
-  // ========================================
+  // ----------------------------------------
   // BACHELOR PARTY DATE
-  // ========================================
+  // ----------------------------------------
 
   if (
-
     text.includes("bachelor party") &&
-
     (
       text.includes("when") ||
+      text.includes("date") ||
       text.includes("eppo") ||
-      text.includes("date")
+      text.includes("enna")
     )
-
   ) {
 
-    return "The bachelor party is from December 6 to December 12.";
+    return {
+      text:
+        "The bachelor party is from December 6 to December 12.",
+
+      speech:
+        "ബാച്ചിലർ പാർട്ടി ഡിസംബർ ആറാം തീയതി മുതൽ ഡിസംബർ പന്ത്രണ്ടാം തീയതി വരെയാണ്."
+    };
   }
 
 
-  // ========================================
+  // ----------------------------------------
   // BACHELOR PARTY LOCATION
-  // ========================================
+  // ----------------------------------------
 
   if (
-
-    text.includes("where is bachelor party") ||
-    text.includes("bachelor party location") ||
-    text.includes("bachelor party evide") ||
-    text.includes("bachelor party evida")
-
+    text.includes("bachelor party") &&
+    (
+      text.includes("where") ||
+      text.includes("location") ||
+      text.includes("venue") ||
+      text.includes("evide")
+    )
   ) {
 
-    return "The bachelor party will be at a private beach in Alappuzha.";
+    return {
+      text:
+        "The bachelor party will be at a private beach in Alappuzha.",
+
+      speech:
+        "ബാച്ചിലർ പാർട്ടി ആലപ്പുഴയിലെ ഒരു സ്വകാര്യ ബീച്ചിലാണ്."
+    };
   }
 
 
-  // ========================================
-  // NO FIXED ANSWER
-  // Let AI answer
-  // ========================================
+  // ----------------------------------------
+  // WHO IS HAREESH MOYALALI
+  // ----------------------------------------
+
+  if (
+    text.includes("who is hareesh") ||
+    text.includes("who is moyalali") ||
+    text.includes("who is hareesh moyalali") ||
+    text.includes("hareesh moyalali aaranu") ||
+    text.includes("hareesh aaranu") ||
+    text.includes("moyalali aaranu") ||
+    text.includes("aaranu hareesh") ||
+    text.includes("ആരാണ് ഹരീഷ്")
+  ) {
+
+    return {
+      text:
+        "Hareesh Moyalali is the fictional central character of the Empire of Everything — a satirical AI character created for this website.",
+
+      speech:
+        "ഹരീഷ് മൊയലാലി എമ്പയർ ഓഫ് എവരിതിംഗ് എന്ന സാറ്റയർ ലോകത്തിലെ ഒരു സാങ്കൽപ്പിക കഥാപാത്രമാണ്."
+    };
+  }
+
+
+  // ----------------------------------------
+  // GREETING
+  // ----------------------------------------
+
+  if (
+    text === "hello" ||
+    text === "hi" ||
+    text === "hey" ||
+    text === "hai" ||
+    text === "namaste" ||
+    text === "ഹലോ"
+  ) {
+
+    return {
+      text:
+        "👋 Hello! I am Hareesh Moyalali AI. Ask me anything about the fictional Empire of Everything.",
+
+      speech:
+        "ഹലോ! ഞാൻ ഹരീഷ് മൊയലാലി എ ഐ ആണ്."
+    };
+  }
+
 
   return null;
 }
-
 
 
 // ==========================================
@@ -236,24 +264,19 @@ const menuButton =
 const nav =
   document.querySelector("nav");
 
-
 if (menuButton && nav) {
 
-  menuButton.addEventListener(
-    "click",
-    () => {
+  menuButton.addEventListener("click", () => {
 
-      nav.classList.toggle("active");
+    nav.classList.toggle("active");
 
-    }
-  );
+  });
 
 }
 
 
-
 // ==========================================
-// CHATBOT ELEMENTS
+// CHAT ELEMENTS
 // ==========================================
 
 const chatForm =
@@ -266,19 +289,16 @@ const chatMessages =
   document.getElementById("chat-messages");
 
 
-
 // ==========================================
 // ADD CHAT MESSAGE
 // ==========================================
 
-function addChatMessage(text, sender) {
+function addChatMessage(text, sender, allowHTML = false) {
 
   if (!chatMessages) return;
 
-
   const message =
     document.createElement("div");
-
 
   message.className =
     sender === "user"
@@ -286,174 +306,168 @@ function addChatMessage(text, sender) {
       : "chat-message bot";
 
 
-  // innerHTML allows Google Maps link
-  message.innerHTML = text;
+  if (
+    sender === "bot" &&
+    allowHTML
+  ) {
+
+    message.innerHTML = text;
+
+  } else {
+
+    message.textContent = text;
+
+  }
 
 
   chatMessages.appendChild(message);
 
-
   chatMessages.scrollTop =
     chatMessages.scrollHeight;
+
 }
 
 
-
 // ==========================================
-// ASK HAREESH AI
-// JSONP CONNECTION
+// ASK BACKEND
 // ==========================================
 
 function askHareeshAI(message) {
 
-  return new Promise(
-    (resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
-      const callbackName =
-        "hareeshAI_" +
-        Date.now() +
-        "_" +
-        Math.floor(
-          Math.random() * 10000
+    const callbackName =
+      "hareeshAI_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 10000);
+
+
+    const script =
+      document.createElement("script");
+
+
+    let finished = false;
+
+
+    const timeout =
+      setTimeout(() => {
+
+        if (finished) return;
+
+        finished = true;
+
+        cleanup();
+
+        reject(
+          new Error(
+            "AI request timed out."
+          )
         );
 
-
-      const script =
-        document.createElement("script");
+      }, 30000);
 
 
-      const timeout =
-        setTimeout(() => {
+    function cleanup() {
 
-          cleanup();
+      clearTimeout(timeout);
 
-          reject(
-            new Error(
-              "AI request timed out."
-            )
-          );
+      if (script.parentNode) {
 
-        }, 60000);
-
-
-
-      function cleanup() {
-
-        clearTimeout(timeout);
-
-
-        if (script.parentNode) {
-
-          script.parentNode.removeChild(
-            script
-          );
-
-        }
-
-
-        try {
-
-          delete window[callbackName];
-
-        } catch (e) {
-
-          window[callbackName] =
-            undefined;
-
-        }
+        script.parentNode.removeChild(script);
 
       }
 
+      try {
 
+        delete window[callbackName];
 
-      // ====================================
-      // GOOGLE APPS SCRIPT RESPONSE
-      // ====================================
+      } catch (e) {
 
-      window[callbackName] =
-        function(data) {
+        window[callbackName] =
+          undefined;
 
-          cleanup();
-
-
-          if (
-            data &&
-            data.error
-          ) {
-
-            reject(
-              new Error(
-                data.error
-              )
-            );
-
-            return;
-          }
-
-
-          if (
-            data &&
-            data.reply
-          ) {
-
-            resolve(
-              data.reply
-            );
-
-            return;
-          }
-
-
-          reject(
-            new Error(
-              "Invalid AI response."
-            )
-          );
-
-        };
-
-
-
-      // ====================================
-      // CONNECTION ERROR
-      // ====================================
-
-      script.onerror =
-        function() {
-
-          cleanup();
-
-
-          reject(
-            new Error(
-              "Unable to connect to Hareesh AI."
-            )
-          );
-
-        };
-
-
-
-      // ====================================
-      // SEND REQUEST
-      // ====================================
-
-      script.src =
-        CHATBOT_BACKEND_URL +
-        "?message=" +
-        encodeURIComponent(message) +
-        "&callback=" +
-        callbackName;
-
-
-      document.body.appendChild(
-        script
-      );
+      }
 
     }
-  );
-}
 
+
+    window[callbackName] =
+      function(data) {
+
+        if (finished) return;
+
+        finished = true;
+
+        cleanup();
+
+
+        if (
+          data &&
+          data.error
+        ) {
+
+          reject(
+            new Error(data.error)
+          );
+
+          return;
+
+        }
+
+
+        if (
+          data &&
+          data.reply
+        ) {
+
+          resolve(data.reply);
+
+          return;
+
+        }
+
+
+        reject(
+          new Error(
+            "Invalid AI response."
+          )
+        );
+
+      };
+
+
+    script.onerror =
+      function() {
+
+        if (finished) return;
+
+        finished = true;
+
+        cleanup();
+
+        reject(
+          new Error(
+            "Unable to connect to Hareesh AI."
+          )
+        );
+
+      };
+
+
+    script.src =
+      CHATBOT_BACKEND_URL +
+      "?message=" +
+      encodeURIComponent(message) +
+      "&callback=" +
+      encodeURIComponent(callbackName);
+
+
+    document.body.appendChild(script);
+
+  });
+
+}
 
 
 // ==========================================
@@ -476,55 +490,7 @@ if (chatForm) {
       if (!message) return;
 
 
-
-      // ====================================
-      // CHECK FIXED ANSWERS FIRST
-      // ====================================
-
-      const fixedReply =
-        getFixedAnswer(message);
-
-
-      if (fixedReply) {
-
-        addChatMessage(
-          message,
-          "user"
-        );
-
-
-        chatInput.value = "";
-
-
-        addChatMessage(
-          fixedReply,
-          "bot"
-        );
-
-
-        // Speak only the text,
-        // not HTML tags
-        const speechText =
-          fixedReply.replace(
-            /<[^>]*>/g,
-            ""
-          );
-
-
-        speakMalayalam(
-          speechText
-        );
-
-
-        return;
-      }
-
-
-
-      // ====================================
-      // SHOW USER MESSAGE
-      // ====================================
-
+      // Show user's message FIRST
       addChatMessage(
         message,
         "user"
@@ -534,10 +500,40 @@ if (chatForm) {
       chatInput.value = "";
 
 
+      // --------------------------------------
+      // CHECK FIXED ANSWERS FIRST
+      // --------------------------------------
 
-      // ====================================
-      // LOADING MESSAGE
-      // ====================================
+      const fixedReply =
+        getFixedAnswer(message);
+
+
+      if (fixedReply) {
+
+        addChatMessage(
+          fixedReply.text,
+          "bot",
+          true
+        );
+
+
+        if (fixedReply.speech) {
+
+          speakMalayalam(
+            fixedReply.speech
+          );
+
+        }
+
+
+        return;
+
+      }
+
+
+      // --------------------------------------
+      // AI BACKEND
+      // --------------------------------------
 
       const loading =
         document.createElement("div");
@@ -560,17 +556,10 @@ if (chatForm) {
         chatMessages.scrollHeight;
 
 
-
-      // ====================================
-      // ASK AI
-      // ====================================
-
       try {
 
         const reply =
-          await askHareeshAI(
-            message
-          );
+          await askHareeshAI(message);
 
 
         loading.remove();
@@ -582,15 +571,14 @@ if (chatForm) {
         );
 
 
-        speakMalayalam(
-          reply
-        );
+        // Speak AI answer in Malayalam
+        speakMalayalam(reply);
 
 
       } catch (error) {
 
         console.error(
-          "Hareesh AI error:",
+          "Hareesh AI Error:",
           error
         );
 
@@ -606,15 +594,12 @@ if (chatForm) {
 }
 
 
-
 // ==========================================
-// QUICK QUESTION BUTTONS
+// QUICK QUESTIONS
 // ==========================================
 
 document
-  .querySelectorAll(
-    ".quick-question"
-  )
+  .querySelectorAll(".quick-question")
   .forEach(button => {
 
     button.addEventListener(
