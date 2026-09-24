@@ -47,6 +47,41 @@ function speakMalayalam(text) {
 
   window.speechSynthesis.speak(speech);
 }
+function getFixedAnswer(message) {
+  const text = message.toLowerCase().trim();
+
+  if (
+    text.includes("when is moyalai marriage") ||
+    text.includes("when is moyalali marriage") ||
+    text.includes("moyalai marriage")
+  ) {
+    return "Moyalai's marriage is on December 12.";
+  }
+
+  if (
+    text.includes("where is marriage") ||
+    text.includes("marriage location") ||
+    text.includes("where is the marriage")
+  ) {
+    return 'The marriage location is here: <a href="https://maps.app.goo.gl/JmXvYvpREPR61rcu8" target="_blank">Open Google Maps</a>';
+  }
+
+  if (
+    text.includes("when is bachelor party") ||
+    text.includes("bachelor party")
+  ) {
+    return "The bachelor party is from December 6 to December 12.";
+  }
+
+  if (
+    text.includes("where is bachelor party") ||
+    text.includes("where is it")
+  ) {
+    return "The bachelor party will be at a private beach in Alappuzha.";
+  }
+
+  return null;
+}
 // ------------------------------------------
 // Mobile menu
 // ------------------------------------------
