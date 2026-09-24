@@ -181,14 +181,18 @@ if (
   // BACHELOR PARTY DATE
   // ----------------------------------------
 
-  if (
-    text.includes("bachelor party") &&
-    (
-      text.includes("when") ||
-      text.includes("date") ||
-      text.includes("eppo") ||
-      text.includes("enna")
-    )
+if (
+  text.includes("bachelor party") ||
+  text.includes("bachelor") ||
+  text.includes("party plan") ||
+  text.includes("plan for bachelor") ||
+  text.includes("bachelor party plan") ||
+  text.includes("bachelor party entha") ||
+  text.includes("ബാച്ചിലർ പാർട്ടി") ||
+  text.includes("ബാച്ചിലർ")
+) {
+  return "Da da ninne okke otha nerathe Shanku kanda atra";
+}
   ) {
 
     return {
