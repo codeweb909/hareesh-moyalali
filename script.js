@@ -644,4 +644,408 @@ async function handleQuestion(question) {
     // =================================================
 
     addMessage(
-        "
+        "Sorry, Hareesh AI could not connect right now. Please try again.",
+        "bot"
+    );
+}
+
+
+// =====================================================
+// SEND QUESTION
+// =====================================================
+
+async function sendQuestion() {
+
+    const input =
+        document.getElementById(
+            "chat-input"
+        );
+
+    if (!input) {
+
+        console.error(
+            "ERROR: chat-input not found."
+        );
+
+        return;
+    }
+
+    const question =
+        input.value.trim();
+
+    if (!question) {
+
+        input.focus();
+
+        return;
+    }
+
+    input.value = "";
+
+    await handleQuestion(
+        question
+    );
+
+    input.focus();
+}
+
+
+// =====================================================
+// INITIALIZE CHAT
+// =====================================================
+
+function initializeChat() {
+
+    console.log(
+        "Hareesh AI initializing..."
+    );
+
+
+    const form =
+        document.getElementById(
+            "chat-form"
+        );
+
+    const input =
+        document.getElementById(
+            "chat-input"
+        );
+    // =================================================
+    // FORM
+    // =================================================
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                const button =
+                    form.querySelector(
+                        'button[type="submit"], input[type="submit"]'
+                    );
+
+
+                if (button) {
+
+                    button.disabled = true;
+
+
+                    if (
+                        button.tagName.toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Sending...";
+
+                    } else {
+
+                        button.textContent =
+                            "Sending...";
+
+                    }
+
+                }
+
+
+                try {
+
+                    await sendQuestion();
+
+                } catch (error) {
+
+                    console.error(
+                        "Chat error:",
+                        error
+                    );
+
+                    removeThinking();
+
+                    addMessage(
+                        "Something went wrong. Please try again.",
+                        "bot"
+                    );
+
+                }
+
+
+                if (button) {
+
+                    button.disabled = false;
+
+
+                    if (
+                        button.tagName.toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Send";
+
+                    } else {
+
+                        button.textContent =
+                            "Send";
+
+                    }
+
+                }
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "ERROR: chat-form not found."
+        );
+
+    }
+
+
+    // =================================================
+    // ENTER KEY
+    // =================================================
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    if (form) {
+
+                        if (
+                            typeof form.requestSubmit ===
+                            "function"
+                        ) {
+
+                            form.requestSubmit();
+
+                        } else {
+
+                            form.dispatchEvent(
+                                new Event(
+                                    "submit",
+                                    {
+                                        bubbles: true,
+                                        cancelable: true
+                                    }
+                                )
+                            );
+
+                        }
+
+                    } else {
+
+                        sendQuestion();
+
+                    }
+
+                }
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "ERROR: chat-input not found."
+        );
+
+    }
+
+
+    // =================================================
+    // QUICK QUESTIONS
+    // =================================================
+
+    const quickButtons =
+        document.querySelectorAll(
+            ".quick-question"
+        );
+
+    console.log(
+        "Quick buttons found:",
+        quickButtons.length
+    );
+
+
+    quickButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    const question =
+                        button.textContent.trim();
+
+                    if (!question) return;
+
+
+                    if (input) {
+
+                        input.value =
+                            question;
+
+                        input.focus();
+
+                    }
+
+
+                    await sendQuestion();
+
+                }
+            );
+
+        }
+    );
+
+
+    console.log(
+        "Hareesh AI initialized successfully."
+    );
+}
+// =====================================================
+// UPDATE YEAR
+// =====================================================
+
+function updateYear() {
+
+    const year =
+        document.getElementById(
+            "year"
+        );
+
+    if (year) {
+
+        year.textContent =
+            new Date().getFullYear();
+
+    }
+}
+
+
+// =====================================================
+// MOBILE MENU
+// =====================================================
+
+function initializeMenu() {
+
+    const menuToggle =
+        document.querySelector(
+            ".menu-toggle"
+        );
+
+    const nav =
+        document.querySelector(
+            ".nav"
+        );
+
+
+    if (
+        !menuToggle ||
+        !nav
+    ) {
+
+        return;
+
+    }
+
+
+    menuToggle.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            nav.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+
+    const links =
+        nav.querySelectorAll(
+            "a"
+        );
+
+
+    links.forEach(
+        function (link) {
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    nav.classList.remove(
+                        "open"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// START EVERYTHING
+// =====================================================
+
+function startHareeshAI() {
+
+    console.log(
+        "Starting Hareesh AI..."
+    );
+
+    initializeChat();
+
+    initializeMenu();
+
+    updateYear();
+
+}
+
+
+// =====================================================
+// DOM READY
+// =====================================================
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        startHareeshAI
+    );
+
+} else {
+
+    startHareeshAI();
+    
+
