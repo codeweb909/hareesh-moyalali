@@ -3,7 +3,7 @@
 // =====================================================
 
 const CHATBOT_BACKEND_URL =
-    "https://script.google.com/macros/s/AKfcyby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
+    "https://script.google.com/macros/s/AKfycby6TUsDGIa00iGL5OWq4_IRGU5R5c7NwntxI798UcbpvODjaAIu0k2Vd-a73xKJQXwL/exec";
 
 
 // =====================================================
@@ -41,20 +41,17 @@ function speakMalayalam(text) {
             utterance.lang =
                 voice ? voice.lang : "ml-IN";
 
-            utterance.voice =
-                voice || null;
+            if (voice) {
+                utterance.voice = voice;
+            }
 
             utterance.rate = 0.95;
             utterance.pitch = 1;
 
-            window.speechSynthesis.speak(
-                utterance
-            );
+            window.speechSynthesis.speak(utterance);
         };
 
-        if (
-            window.speechSynthesis.getVoices().length > 0
-        ) {
+        if (window.speechSynthesis.getVoices().length > 0) {
 
             speak();
 
@@ -72,10 +69,7 @@ function speakMalayalam(text) {
 
     } catch (error) {
 
-        console.log(
-            "Voice error:",
-            error
-        );
+        console.log("Voice error:", error);
     }
 }
 
@@ -103,7 +97,6 @@ function getLocalAnswer(question) {
         text.includes("when is marriage") ||
         text.includes("when is moyalali marriage") ||
         text.includes("when is hareesh marriage") ||
-        text.includes("moyalali marriage") ||
         text.includes("കല്യാണം എപ്പോൾ") ||
         text.includes("കല്യാണം എപ്പോഴാണ്")
     ) {
@@ -115,38 +108,6 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഹരീഷ് മായലാലിയുടെ കല്യാണം ഡിസംബർ പന്ത്രണ്ടിനാണ്."
-
-        };
-    }
-
-
-    // =================================================
-    // BACHELOR PARTY DATE
-    // IMPORTANT: CHECK DATE BEFORE GENERAL PLAN
-    // =================================================
-
-    if (
-        (
-            text.includes("bachelor party") ||
-            text.includes("bachelor")
-        ) &&
-        (
-            text.includes("when") ||
-            text.includes("date") ||
-            text.includes("eppo") ||
-            text.includes("എപ്പോൾ") ||
-            text.includes("എന്നാണ്")
-        )
-    ) {
-
-        return {
-
-            text:
-                "The bachelor party is from December 6 to December 12.",
-
-            speech:
-                "The bachelor party is from December 6 to December 12."
-
         };
     }
 
@@ -173,7 +134,35 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഡാ ഡാ, നിന്നെ ഒക്കെ ഒത്ത നേരത്തെ ശങ്കു കണ്ട അത്ര! ലോകം ഒന്നും ഇവിടെ ആരും കണ്ടിട്ടില്ല."
+        };
+    }
 
+
+    // =================================================
+    // BACHELOR PARTY DATE
+    // =================================================
+
+    if (
+        (
+            text.includes("bachelor party") ||
+            text.includes("bachelor")
+        ) &&
+        (
+            text.includes("when") ||
+            text.includes("date") ||
+            text.includes("eppo") ||
+            text.includes("എപ്പോൾ") ||
+            text.includes("എന്നാണ്")
+        )
+    ) {
+
+        return {
+
+            text:
+                "The bachelor party is from December 6 to December 12.",
+
+            speech:
+                "The bachelor party is from December 6 to December 12."
         };
     }
 
@@ -202,11 +191,10 @@ function getLocalAnswer(question) {
         return {
 
             text:
-                'Wedding location: <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Open Google Maps 📍</a>',
+                '<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Wedding location: Open Google Maps 📍</a>',
 
             speech:
                 "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
-
         };
     }
 
@@ -219,18 +207,16 @@ function getLocalAnswer(question) {
         text.includes("tell me about the empire") ||
         text.includes("what is the empire") ||
         text === "empire" ||
-        text.includes("empire of everything") ||
-        text === "tell me about the empire"
+        text.includes("empire of everything")
     ) {
 
         return {
 
             text:
-                'The Empire of Everything is the fictional world featured on this website.',
+                '<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Wedding location: Open Google Maps 📍</a>',
 
             speech:
-                "ദ എംപയർ ഓഫ് എവരിതിംഗ് ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക ലോകമാണ്."
-
+                "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
         };
     }
 
@@ -252,7 +238,6 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഹരീഷ് മായലാലി ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക പ്രധാന കഥാപാത്രമാണ്."
-
         };
     }
 
@@ -273,13 +258,12 @@ function getLocalAnswer(question) {
 
             speech:
                 "മിഷൻ അഖണ്ഡ് ഭാരത് ഈ വെബ്സൈറ്റിൽ അവതരിപ്പിച്ചിരിക്കുന്ന ഒരു സാങ്കൽപ്പിക രാഷ്ട്രീയ ആശയമാണ്."
-
         };
     }
 
 
     // =================================================
-    // MODI LOVER CHAPTER
+    // MODI LOVER
     // =================================================
 
     if (
@@ -294,14 +278,9 @@ function getLocalAnswer(question) {
 
             speech:
                 "മോദി ലവർ ചാപ്റ്റർ ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക ലോകത്തിന്റെ ഭാഗമാണ്."
-
         };
     }
 
-
-    // =================================================
-    // NO LOCAL ANSWER
-    // =================================================
 
     return null;
 }
@@ -332,7 +311,7 @@ function addMessage(text, type) {
         "chat-message " + type;
 
     message.innerHTML =
-        text;
+        String(text);
 
     messages.appendChild(message);
 
@@ -382,9 +361,7 @@ function showThinking() {
 function removeThinking() {
 
     const thinking =
-        document.getElementById(
-            "thinking-message"
-        );
+        document.getElementById("thinking-message");
 
     if (thinking) {
         thinking.remove();
@@ -415,6 +392,7 @@ async function askGoogle(question) {
             url
         );
 
+
         const controller =
             new AbortController();
 
@@ -436,7 +414,6 @@ async function askGoogle(question) {
                 cache: "no-store",
 
                 signal: controller.signal
-
             });
 
 
@@ -459,4 +436,597 @@ async function askGoogle(question) {
 
 
         const raw =
-            await response
+            await response.text();
+
+
+        console.log(
+            "Google raw response:",
+            raw
+        );
+
+
+        if (!raw || !raw.trim()) {
+
+            return null;
+        }
+
+
+        const cleaned =
+            raw.trim();
+
+
+        // =================================================
+        // TRY JSON
+        // =================================================
+
+        try {
+
+            const data =
+                JSON.parse(cleaned);
+
+
+            console.log(
+                "Google JSON:",
+                data
+            );
+
+
+            if (typeof data === "string") {
+
+                return data;
+            }
+
+
+            if (data.answer) {
+
+                return data.answer;
+            }
+
+
+            if (data.response) {
+
+                return data.response;
+            }
+
+
+            if (data.text) {
+
+                return data.text;
+            }
+
+
+            if (data.result) {
+
+                return data.result;
+            }
+
+
+            if (data.message) {
+
+                return data.message;
+            }
+
+
+            if (data.reply) {
+
+                return data.reply;
+            }
+
+
+            if (data.error) {
+
+                console.error(
+                    "Google Apps Script error:",
+                    data.error
+                );
+
+                return null;
+            }
+
+        } catch (jsonError) {
+
+            console.log(
+                "Google response is plain text."
+            );
+        }
+
+
+        // =================================================
+        // PLAIN TEXT FALLBACK
+        // =================================================
+
+        return cleaned;
+
+
+    } catch (error) {
+
+        console.error(
+            "Google connection error:",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+// =====================================================
+// HANDLE QUESTION
+// =====================================================
+
+async function handleQuestion(question) {
+
+    const cleanQuestion =
+        String(question || "").trim();
+
+
+    if (!cleanQuestion) {
+        return;
+    }
+
+
+    // =================================================
+    // SHOW USER MESSAGE
+    // =================================================
+
+    addMessage(
+        cleanQuestion,
+        "user"
+    );
+
+
+    // =================================================
+    // LOCAL ANSWER FIRST
+    // =================================================
+
+    const localAnswer =
+        getLocalAnswer(cleanQuestion);
+
+
+    if (localAnswer) {
+
+        addMessage(
+            localAnswer.text,
+            "bot"
+        );
+
+
+        if (localAnswer.speech) {
+
+            speakMalayalam(
+                localAnswer.speech
+            );
+        }
+
+
+        return;
+    }
+
+
+    // =================================================
+    // GOOGLE AI
+    // =================================================
+
+    showThinking();
+
+
+    const googleAnswer =
+        await askGoogle(
+            cleanQuestion
+        );
+
+
+    removeThinking();
+
+
+    if (googleAnswer) {
+
+        addMessage(
+            googleAnswer,
+            "bot"
+        );
+
+
+        speakMalayalam(
+            googleAnswer
+        );
+
+
+        return;
+    }
+
+
+    // =================================================
+    // ERROR
+    // =================================================
+
+    addMessage(
+        "Sorry, Hareesh AI could not connect right now. Please try again.",
+        "bot"
+    );
+}
+
+
+// =====================================================
+// SEND QUESTION
+// =====================================================
+
+async function sendQuestion() {
+
+    const input =
+        document.getElementById("chat-input");
+
+
+    if (!input) {
+
+        console.error(
+            "Hareesh AI ERROR: chat-input not found."
+        );
+
+        return;
+    }
+
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        input.focus();
+
+        return;
+    }
+
+
+    input.value = "";
+
+
+    await handleQuestion(
+        question
+    );
+
+
+    input.focus();
+}
+
+
+// =====================================================
+// INITIALIZE CHAT
+// =====================================================
+
+function initializeChat() {
+
+    console.log(
+        "Hareesh AI chat initializing..."
+    );
+
+
+    const form =
+        document.getElementById("chat-form");
+
+
+    const input =
+        document.getElementById("chat-input");
+
+
+    // =================================================
+    // FORM
+    // =================================================
+
+    if (form) {
+
+        form.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                const button =
+                    form.querySelector(
+                        'button[type="submit"], input[type="submit"]'
+                    );
+
+
+                if (button) {
+
+                    button.disabled = true;
+
+
+                    if (
+                        button.tagName.toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Sending...";
+
+                    } else {
+
+                        button.textContent =
+                            "Sending...";
+                    }
+                }
+
+
+                try {
+
+                    await sendQuestion();
+
+                } catch (error) {
+
+                    console.error(
+                        "Chat error:",
+                        error
+                    );
+
+
+                    removeThinking();
+
+
+                    addMessage(
+                        "Something went wrong. Please try again.",
+                        "bot"
+                    );
+                }
+
+
+                if (button) {
+
+                    button.disabled = false;
+
+
+                    if (
+                        button.tagName.toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Send";
+
+                    } else {
+
+                        button.textContent =
+                            "Send";
+                    }
+                }
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "Hareesh AI ERROR: chat-form not found."
+        );
+    }
+
+
+    // =================================================
+    // ENTER KEY
+    // =================================================
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+
+                    if (form) {
+
+                        if (
+                            typeof form.requestSubmit ===
+                            "function"
+                        ) {
+
+                            form.requestSubmit();
+
+                        } else {
+
+                            form.dispatchEvent(
+                                new Event(
+                                    "submit",
+                                    {
+                                        bubbles: true,
+                                        cancelable: true
+                                    }
+                                )
+                            );
+                        }
+
+                    } else {
+
+                        sendQuestion();
+                    }
+                }
+
+            }
+        );
+
+    } else {
+
+        console.error(
+            "Hareesh AI ERROR: chat-input not found."
+        );
+    }
+
+
+    // =================================================
+    // QUICK QUESTION BUTTONS
+    // =================================================
+
+    const quickButtons =
+        document.querySelectorAll(
+            ".quick-question"
+        );
+
+
+    console.log(
+        "Quick buttons found:",
+        quickButtons.length
+    );
+
+
+    quickButtons.forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                async function(event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    const question =
+                        button.textContent.trim();
+
+
+                    if (!question) {
+                        return;
+                    }
+
+
+                    if (input) {
+
+                        input.value =
+                            question;
+
+                        input.focus();
+                    }
+
+
+                    await sendQuestion();
+                }
+            );
+        }
+    );
+
+
+    console.log(
+        "Hareesh AI chat initialized successfully."
+    );
+}
+
+
+// =====================================================
+// UPDATE YEAR
+// =====================================================
+
+function updateYear() {
+
+    const year =
+        document.getElementById("year");
+
+
+    if (year) {
+
+        year.textContent =
+            new Date().getFullYear();
+    }
+}
+
+
+// =====================================================
+// MOBILE MENU
+// =====================================================
+
+function initializeMenu() {
+
+    const menuToggle =
+        document.querySelector(".menu-toggle");
+
+
+    const nav =
+        document.querySelector(".nav");
+
+
+    if (!menuToggle || !nav) {
+
+        return;
+    }
+
+
+    menuToggle.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            nav.classList.toggle("open");
+        }
+    );
+
+
+    const links =
+        nav.querySelectorAll("a");
+
+
+    links.forEach(
+        function(link) {
+
+            link.addEventListener(
+                "click",
+                function() {
+
+                    nav.classList.remove("open");
+                }
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// START EVERYTHING
+// =====================================================
+
+function startHareeshAI() {
+
+    console.log(
+        "Hareesh AI starting..."
+    );
+
+
+    initializeChat();
+
+    initializeMenu();
+
+    updateYear();
+
+
+    console.log(
+        "Hareesh AI started successfully."
+    );
+}
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        startHareeshAI
+    );
+
+} else {
+
+    startHareeshAI();
+}
