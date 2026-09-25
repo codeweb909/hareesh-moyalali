@@ -74,7 +74,6 @@ function speakMalayalam(text) {
             "Voice error:",
             error
         );
-
     }
 }
 
@@ -211,8 +210,6 @@ function getLocalAnswer(question) {
 
     // =================================================
     // EMPIRE
-    // "Tell me about the empire" now gives
-    // wedding location
     // =================================================
 
     if (
@@ -408,8 +405,6 @@ async function askGoogle(question) {
 
     try {
 
-        // Send the question using "message"
-        // because the Google Apps Script expects "message"
         const url =
             CHATBOT_BACKEND_URL +
             "?message=" +
@@ -455,7 +450,6 @@ async function askGoogle(question) {
                 "Google server returned HTTP " +
                 response.status
             );
-
         }
 
         const raw =
@@ -469,11 +463,11 @@ async function askGoogle(question) {
         if (!raw || !raw.trim()) {
 
             return null;
-
         }
 
         const cleaned =
             raw.trim();
+
 
         // =================================================
         // TRY JSON
@@ -489,35 +483,61 @@ async function askGoogle(question) {
                 data
             );
 
-            // If response is a simple string
+
+            // ---------------------------------------------
+            // SIMPLE STRING RESPONSE
+            // ---------------------------------------------
+
             if (typeof data === "string") {
 
                 return data;
-
             }
 
-            // Common response fields
+
+            // ---------------------------------------------
+            // APPS SCRIPT RETURNS { reply: "..." }
+            // ---------------------------------------------
+
+            if (data.reply) {
+
+                return data.reply;
+            }
+
+
+            // ---------------------------------------------
+            // OTHER POSSIBLE RESPONSE FIELDS
+            // ---------------------------------------------
+
             if (data.answer) {
-    return data.answer;
-}
 
-if (data.response) {
-    return data.response;
-}
+                return data.answer;
+            }
 
-if (data.text) {
-    return data.text;
-}
+            if (data.response) {
 
-if (data.result) {
-    return data.result;
-}
+                return data.response;
+            }
 
-if (data.message) {
-    return data.message;
-}
+            if (data.text) {
 
-            // If Apps Script returned an error
+                return data.text;
+            }
+
+            if (data.result) {
+
+                return data.result;
+            }
+
+            if (data.message) {
+
+                return data.message;
+            }
+
+
+            // ---------------------------------------------
+            // ERROR FROM APPS SCRIPT
+            // ---------------------------------------------
+
             if (data.error) {
 
                 console.error(
@@ -526,7 +546,6 @@ if (data.message) {
                 );
 
                 return null;
-
             }
 
         } catch (jsonError) {
@@ -534,8 +553,8 @@ if (data.message) {
             console.log(
                 "Google response is plain text."
             );
-
         }
+
 
         // =================================================
         // PLAIN TEXT FALLBACK
@@ -551,10 +570,33 @@ if (data.message) {
         );
 
         return null;
+    }
+}
 
+
+// =====================================================
+// HANDLE QUESTION
+// =====================================================
+
+async function handleQuestion(question) {
+
+    const cleanQuestion =
+        question.trim();
+
+    if (!cleanQuestion) {
+
+        return;
     }
 
-}
+
+    // =================================================
+    // SHOW USER QUESTION
+    // =================================================
+
+    addMessage(
+        cleanQuestion,
+        "user"
+    );
 
 
     // =================================================
@@ -724,6 +766,7 @@ function initializeChat() {
                     }
                 }
 
+
                 try {
 
                     await sendQuestion();
@@ -742,6 +785,7 @@ function initializeChat() {
                         "bot"
                     );
                 }
+
 
                 if (button) {
 
@@ -793,9 +837,16 @@ function initializeChat() {
 
                     if (form) {
 
-                        form.requestSubmit
-                            ? form.requestSubmit()
-                            : form.dispatchEvent(
+                        if (
+                            typeof form.requestSubmit ===
+                            "function"
+                        ) {
+
+                            form.requestSubmit();
+
+                        } else {
+
+                            form.dispatchEvent(
                                 new Event(
                                     "submit",
                                     {
@@ -804,6 +855,7 @@ function initializeChat() {
                                     }
                                 )
                             );
+                        }
 
                     } else {
 
@@ -854,122 +906,4 @@ function initializeChat() {
 
                     if (input) {
 
-                        input.value =
-                            question;
-
-                        input.focus();
-                    }
-
-                    await sendQuestion();
-
-                }
-            );
-
-        }
-    );
-
-
-    console.log(
-        "Hareesh AI chat initialized successfully."
-    );
-}
-
-
-// =====================================================
-// UPDATE YEAR
-// =====================================================
-
-function updateYear() {
-
-    const year =
-        document.getElementById(
-            "year"
-        );
-
-    if (year) {
-
-        year.textContent =
-            new Date().getFullYear();
-    }
-}
-
-
-// =====================================================
-// MOBILE MENU
-// =====================================================
-
-function initializeMenu() {
-
-    const menuToggle =
-        document.querySelector(
-            ".menu-toggle"
-        );
-
-    const nav =
-        document.querySelector(
-            ".nav"
-        );
-
-    if (
-        !menuToggle ||
-        !nav
-    ) {
-
-        return;
-    }
-
-    menuToggle.addEventListener(
-        "click",
-        function(event) {
-
-            event.preventDefault();
-
-            nav.classList.toggle(
-                "open"
-            );
-        }
-    );
-
-    const links =
-        nav.querySelectorAll(
-            "a"
-        );
-
-    links.forEach(
-        function(link) {
-
-            link.addEventListener(
-                "click",
-                function() {
-
-                    nav.classList.remove(
-                        "open"
-                    );
-                }
-            );
-
-        }
-    );
-}
-
-
-// =====================================================
-// START EVERYTHING
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        console.log(
-            "Hareesh AI DOM loaded."
-        );
-
-        initializeChat();
-
-        initializeMenu();
-
-        updateYear();
-
-    }
-);
+                        in
