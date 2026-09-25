@@ -1049,3 +1049,117 @@ if (
     startHareeshAI();
 
 }
+// =====================================================
+// VOICE QUESTION INPUT
+// =====================================================
+
+(function () {
+
+    const voiceButton =
+        document.getElementById("voice-button");
+
+    const chatInput =
+        document.getElementById("chat-input");
+
+
+    if (!voiceButton || !chatInput) {
+        return;
+    }
+
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if (!SpeechRecognition) {
+
+        voiceButton.disabled = true;
+
+        voiceButton.title =
+            "Voice input is not supported in this browser.";
+
+        return;
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.continuous = false;
+
+    recognition.interimResults = false;
+
+    recognition.lang = "en-IN";
+
+
+    // START VOICE INPUT
+    voiceButton.addEventListener("click", function () {
+
+        try {
+
+            recognition.start();
+
+            voiceButton.classList.add("listening");
+
+            voiceButton.textContent = "🔴";
+
+            voiceButton.title = "Listening...";
+
+        } catch (error) {
+
+            console.log(
+                "Voice recognition already active."
+            );
+
+        }
+
+    });
+
+
+    // WHEN SPEECH IS RECOGNIZED
+    recognition.onresult = function (event) {
+
+        const transcript =
+            event.results[0][0].transcript;
+
+
+        // Put the spoken words into
+        // the existing text input.
+        chatInput.value = transcript;
+
+        chatInput.focus();
+
+    };
+
+
+    // WHEN LISTENING STOPS
+    recognition.onend = function () {
+
+        voiceButton.classList.remove("listening");
+
+        voiceButton.textContent = "🎤";
+
+        voiceButton.title = "Ask by voice";
+
+    };
+
+
+    // IF THERE IS AN ERROR
+    recognition.onerror = function (event) {
+
+        console.log(
+            "Voice recognition error:",
+            event.error
+        );
+
+        voiceButton.classList.remove("listening");
+
+        voiceButton.textContent = "🎤";
+
+        voiceButton.title = "Ask by voice";
+
+    };
+
+})();
