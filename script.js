@@ -404,10 +404,6 @@ function removeThinking() {
 // GOOGLE APPS SCRIPT
 // =====================================================
 
-// =====================================================
-// GOOGLE APPS SCRIPT
-// =====================================================
-
 async function askGoogle(question) {
 
     try {
@@ -501,35 +497,29 @@ async function askGoogle(question) {
             }
 
             // Common response fields
-            if (data.answer) {
+            if (data.reply) {
+    return data.reply;
+}
 
-                return data.answer;
+if (data.answer) {
+    return data.answer;
+}
 
-            }
+if (data.response) {
+    return data.response;
+}
 
-            if (data.response) {
+if (data.text) {
+    return data.text;
+}
 
-                return data.response;
+if (data.result) {
+    return data.result;
+}
 
-            }
-
-            if (data.text) {
-
-                return data.text;
-
-            }
-
-            if (data.result) {
-
-                return data.result;
-
-            }
-
-            if (data.message) {
-
-                return data.message;
-
-            }
+if (data.message) {
+    return data.message;
+}
 
             // If Apps Script returned an error
             if (data.error) {
