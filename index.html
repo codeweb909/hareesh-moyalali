@@ -217,13 +217,26 @@
 
     <form id="chat-form" class="chat-form">
 
-      <input
+    <div class="input-row">
+
+    <input
         id="chat-input"
         type="text"
         placeholder="Ask Hareesh AI something..."
         autocomplete="off"
         required
-      >
+    >
+
+    <button
+        type="button"
+        id="voice-button"
+        aria-label="Ask by voice"
+        title="Ask by voice"
+    >
+        🎤
+    </button>
+
+    </div>
 
       <button type="submit" class="button">
         Send
