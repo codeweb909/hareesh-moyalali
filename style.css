@@ -252,3 +252,58 @@ body { margin: 0; color: var(--ink); background: var(--cream); font-family: "DM 
 .dropdown-item a:hover {
   color: var(--gold) !important;
 }
+/* =====================================================
+   VOICE INPUT BUTTON
+===================================================== */
+
+.input-row {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.input-row #chat-input {
+    flex: 1;
+}
+
+#voice-button {
+    width: 70px;
+    min-width: 70px;
+
+    border: 1px solid #c9a253;
+    border-radius: 16px;
+
+    background: #0c3328;
+    color: white;
+
+    font-size: 28px;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+#voice-button:hover {
+    background: #14513f;
+}
+
+#voice-button:active {
+    transform: scale(0.96);
+}
+
+#voice-button.listening {
+    background: #a33a3a;
+    border-color: #a33a3a;
+}
+
+@media (max-width: 480px) {
+
+    #voice-button {
+        width: 62px;
+        min-width: 62px;
+        font-size: 25px;
+    }
+
+}
