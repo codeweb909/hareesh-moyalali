@@ -404,20 +404,29 @@ function removeThinking() {
 // GOOGLE APPS SCRIPT
 // =====================================================
 
+// =====================================================
+// GOOGLE APPS SCRIPT
+// =====================================================
+
 async function askGoogle(question) {
 
     try {
 
+        // Send the question using "message"
+        // because the Google Apps Script expects "message"
         const url =
             CHATBOT_BACKEND_URL +
-            "?question=" +
-            encodeURIComponent(question) +
-            "&q=" +
+            "?message=" +
             encodeURIComponent(question);
 
         console.log(
-            "Sending question to Google:",
+            "Sending to Google:",
             question
+        );
+
+        console.log(
+            "Google URL:",
+            url
         );
 
         const controller =
@@ -425,24 +434,17 @@ async function askGoogle(question) {
 
         const timeout =
             setTimeout(
-                function () {
-
-                    controller.abort();
-
-                },
+                () => controller.abort(),
                 20000
             );
 
         const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
-                    redirect: "follow",
-                    cache: "no-store",
-                    signal: controller.signal
-                }
-            );
+            await fetch(url, {
+                method: "GET",
+                redirect: "follow",
+                cache: "no-store",
+                signal: controller.signal
+            });
 
         clearTimeout(timeout);
 
@@ -457,6 +459,7 @@ async function askGoogle(question) {
                 "Google server returned HTTP " +
                 response.status
             );
+
         }
 
         const raw =
@@ -467,65 +470,77 @@ async function askGoogle(question) {
             raw
         );
 
-        if (
-            !raw ||
-            !raw.trim()
-        ) {
+        if (!raw || !raw.trim()) {
 
             return null;
+
         }
 
         const cleaned =
             raw.trim();
 
-
         // =================================================
-        // JSON RESPONSE
+        // TRY JSON
         // =================================================
 
         try {
 
             const data =
-                JSON.parse(
-                    cleaned
-                );
+                JSON.parse(cleaned);
 
             console.log(
                 "Google JSON:",
                 data
             );
 
-            if (
-                typeof data ===
-                "string"
-            ) {
+            // If response is a simple string
+            if (typeof data === "string") {
 
                 return data;
+
             }
 
+            // Common response fields
             if (data.answer) {
 
                 return data.answer;
+
             }
 
             if (data.response) {
 
                 return data.response;
+
             }
 
             if (data.text) {
 
                 return data.text;
+
             }
 
             if (data.result) {
 
                 return data.result;
+
             }
 
             if (data.message) {
 
                 return data.message;
+
+            }
+
+            // If Apps Script returned an error
+            if (data.error) {
+
+                console.error(
+                    "Google Apps Script error:",
+                    data.error
+                );
+
+                return null;
+
             }
 
         } catch (jsonError) {
@@ -533,11 +548,11 @@ async function askGoogle(question) {
             console.log(
                 "Google response is plain text."
             );
+
         }
 
-
         // =================================================
-        // PLAIN TEXT
+        // PLAIN TEXT FALLBACK
         // =================================================
 
         return cleaned;
@@ -545,37 +560,15 @@ async function askGoogle(question) {
     } catch (error) {
 
         console.error(
-            "Google Apps Script error:",
+            "Google connection error:",
             error
         );
 
         return null;
+
     }
+
 }
-
-
-// =====================================================
-// HANDLE QUESTION
-// =====================================================
-
-async function handleQuestion(question) {
-
-    if (!question) return;
-
-    const cleanQuestion =
-        question.trim();
-
-    if (!cleanQuestion) return;
-
-
-    // =================================================
-    // SHOW USER MESSAGE
-    // =================================================
-
-    addMessage(
-        cleanQuestion,
-        "user"
-    );
 
 
     // =================================================
