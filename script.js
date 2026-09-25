@@ -12,7 +12,9 @@ const CHATBOT_BACKEND_URL =
 
 function speakMalayalam(text) {
 
-    if (!("speechSynthesis" in window)) return;
+    if (!("speechSynthesis" in window)) {
+        return;
+    }
 
     try {
 
@@ -45,33 +47,54 @@ function speakMalayalam(text) {
             utterance.rate = 0.95;
             utterance.pitch = 1;
 
-            window.speechSynthesis.speak(utterance);
+            window.speechSynthesis.speak(
+                utterance
+            );
         };
 
-        if (
-            window.speechSynthesis.getVoices().length
-        ) {
+        const voices =
+            window.speechSynthesis.getVoices();
+
+        if (voices.length > 0) {
+
             speak();
+
         } else {
-            window.speechSynthesis.onvoiceschanged = speak;
+
+            window.speechSynthesis.onvoiceschanged =
+                function() {
+
+                    window.speechSynthesis.onvoiceschanged =
+                        null;
+
+                    speak();
+
+                };
+
         }
 
     } catch (error) {
 
-        console.log("Voice error:", error);
+        console.log(
+            "Voice error:",
+            error
+        );
 
     }
+
 }
 
 
 // =====================================================
-// LOCAL ANSWERS
+// LOCAL CUSTOM ANSWERS
 // =====================================================
 
 function getLocalAnswer(question) {
 
     const text =
-        question.toLowerCase().trim();
+        question
+            .toLowerCase()
+            .trim();
 
 
     // =================================================
@@ -180,7 +203,7 @@ function getLocalAnswer(question) {
         return {
 
             text:
-                'Wedding location: <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Open Google Maps 📍</a>',
+                '<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Wedding location: Open Google Maps 📍</a>',
 
             speech:
                 "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
@@ -298,9 +321,19 @@ function getLocalAnswer(question) {
 function addMessage(text, type) {
 
     const messages =
-        document.getElementById("chat-messages");
+        document.getElementById(
+            "chat-messages"
+        );
 
-    if (!messages) return;
+    if (!messages) {
+
+        console.error(
+            "ERROR: #chat-messages not found"
+        );
+
+        return;
+
+    }
 
     const message =
         document.createElement("div");
@@ -308,9 +341,12 @@ function addMessage(text, type) {
     message.className =
         "chat-message " + type;
 
-    message.innerHTML = text;
+    message.innerHTML =
+        text;
 
-    messages.appendChild(message);
+    messages.appendChild(
+        message
+    );
 
     messages.scrollTop =
         messages.scrollHeight;
@@ -327,7 +363,9 @@ function showThinking() {
     removeThinking();
 
     const messages =
-        document.getElementById("chat-messages");
+        document.getElementById(
+            "chat-messages"
+        );
 
     if (!messages) return;
 
@@ -343,7 +381,9 @@ function showThinking() {
     thinking.textContent =
         "Hareesh AI is thinking...";
 
-    messages.appendChild(thinking);
+    messages.appendChild(
+        thinking
+    );
 
     messages.scrollTop =
         messages.scrollHeight;
@@ -358,7 +398,9 @@ function showThinking() {
 function removeThinking() {
 
     const thinking =
-        document.getElementById("thinking-message");
+        document.getElementById(
+            "thinking-message"
+        );
 
     if (thinking) {
 
@@ -384,52 +426,46 @@ async function askGoogle(question) {
             "&q=" +
             encodeURIComponent(question);
 
-
         console.log(
             "Sending question to Google:",
             question
         );
-
 
         console.log(
             "Google URL:",
             url
         );
 
-
         const controller =
             new AbortController();
 
-
         const timeout =
             setTimeout(
-                () => controller.abort(),
+                function() {
+
+                    controller.abort();
+
+                },
                 20000
             );
 
-
         const response =
-            await fetch(url, {
-
-                method: "GET",
-
-                redirect: "follow",
-
-                cache: "no-store",
-
-                signal: controller.signal
-
-            });
-
+            await fetch(
+                url,
+                {
+                    method: "GET",
+                    redirect: "follow",
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
 
         clearTimeout(timeout);
-
 
         console.log(
             "Google status:",
             response.status
         );
-
 
         if (!response.ok) {
 
@@ -440,23 +476,22 @@ async function askGoogle(question) {
 
         }
 
-
         const raw =
             await response.text();
-
 
         console.log(
             "Google raw response:",
             raw
         );
 
-
-        if (!raw || !raw.trim()) {
+        if (
+            !raw ||
+            !raw.trim()
+        ) {
 
             return null;
 
         }
-
 
         const cleaned =
             raw.trim();
@@ -469,8 +504,9 @@ async function askGoogle(question) {
         try {
 
             const data =
-                JSON.parse(cleaned);
-
+                JSON.parse(
+                    cleaned
+                );
 
             console.log(
                 "Google JSON:",
@@ -478,16 +514,15 @@ async function askGoogle(question) {
             );
 
 
-            // JSON string
-
-            if (typeof data === "string") {
+            if (
+                typeof data ===
+                "string"
+            ) {
 
                 return data;
 
             }
 
-
-            // answer
 
             if (data.answer) {
 
@@ -496,16 +531,12 @@ async function askGoogle(question) {
             }
 
 
-            // response
-
             if (data.response) {
 
                 return data.response;
 
             }
 
-
-            // text
 
             if (data.text) {
 
@@ -514,8 +545,6 @@ async function askGoogle(question) {
             }
 
 
-            // result
-
             if (data.result) {
 
                 return data.result;
@@ -523,14 +552,11 @@ async function askGoogle(question) {
             }
 
 
-            // message
-
             if (data.message) {
 
                 return data.message;
 
             }
-
 
         } catch (jsonError) {
 
@@ -546,7 +572,6 @@ async function askGoogle(question) {
         // =================================================
 
         return cleaned;
-
 
     } catch (error) {
 
@@ -570,15 +595,13 @@ async function handleQuestion(question) {
 
     if (!question) return;
 
-
     const cleanQuestion =
         question.trim();
-
 
     if (!cleanQuestion) return;
 
 
-    // Show user message
+    // USER MESSAGE
 
     addMessage(
         cleanQuestion,
@@ -587,12 +610,13 @@ async function handleQuestion(question) {
 
 
     // =================================================
-    // CHECK LOCAL CUSTOM ANSWERS FIRST
+    // LOCAL CUSTOM ANSWER FIRST
     // =================================================
 
     const localAnswer =
-        getLocalAnswer(cleanQuestion);
-
+        getLocalAnswer(
+            cleanQuestion
+        );
 
     if (localAnswer) {
 
@@ -600,7 +624,6 @@ async function handleQuestion(question) {
             localAnswer.text,
             "bot"
         );
-
 
         if (localAnswer.speech) {
 
@@ -621,10 +644,10 @@ async function handleQuestion(question) {
 
     showThinking();
 
-
     const googleAnswer =
-        await askGoogle(cleanQuestion);
-
+        await askGoogle(
+            cleanQuestion
+        );
 
     removeThinking();
 
@@ -646,13 +669,57 @@ async function handleQuestion(question) {
 
 
     // =================================================
-    // ERROR / FALLBACK
+    // ERROR
     // =================================================
 
     addMessage(
         "Sorry, Hareesh AI could not connect right now. Please try again.",
         "bot"
     );
+
+}
+
+
+// =====================================================
+// SEND QUESTION
+// =====================================================
+
+async function sendQuestion() {
+
+    const input =
+        document.getElementById(
+            "chat-input"
+        );
+
+    if (!input) {
+
+        console.error(
+            "ERROR: #chat-input not found"
+        );
+
+        return;
+
+    }
+
+    const question =
+        input.value.trim();
+
+    if (!question) {
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    input.value = "";
+
+    await handleQuestion(
+        question
+    );
+
+    input.focus();
 
 }
 
@@ -669,24 +736,21 @@ function initializeChat() {
 
 
     const form =
-        document.getElementById("chat-form");
-
+        document.getElementById(
+            "chat-form"
+        );
 
     const input =
-        document.getElementById("chat-input");
-
-
-    const quickButtons =
-        document.querySelectorAll(
-            ".quick-question"
+        document.getElementById(
+            "chat-input"
         );
 
 
     // =================================================
-    // CHAT FORM
+    // FORM SUBMIT
     // =================================================
 
-    if (form && input) {
+    if (form) {
 
         form.addEventListener(
             "submit",
@@ -694,49 +758,45 @@ function initializeChat() {
 
                 event.preventDefault();
 
-
-                const question =
-                    input.value.trim();
-
-
-                if (!question) {
-
-                    return;
-
-                }
-
-
-                // Disable button while processing
+                event.stopPropagation();
 
                 const button =
                     form.querySelector(
-                        'button[type="submit"]'
+                        'button[type="submit"], input[type="submit"]'
                     );
-
 
                 if (button) {
 
-                    button.disabled = true;
+                    button.disabled =
+                        true;
 
-                    button.textContent =
-                        "Sending...";
+                    if (
+                        button.tagName
+                            .toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Sending...";
+
+                    } else {
+
+                        button.textContent =
+                            "Sending...";
+
+                    }
 
                 }
-
-
-                input.value = "";
 
 
                 try {
 
-                    await handleQuestion(
-                        question
-                    );
+                    await sendQuestion();
 
                 } catch (error) {
 
                     console.error(
-                        "Chat error:",
+                        "Send error:",
                         error
                     );
 
@@ -750,19 +810,28 @@ function initializeChat() {
                 }
 
 
-                // Re-enable button
-
                 if (button) {
 
-                    button.disabled = false;
+                    button.disabled =
+                        false;
 
-                    button.textContent =
-                        "Send";
+                    if (
+                        button.tagName
+                            .toLowerCase() ===
+                        "input"
+                    ) {
+
+                        button.value =
+                            "Send";
+
+                    } else {
+
+                        button.textContent =
+                            "Send";
+
+                    }
 
                 }
-
-
-                input.focus();
 
             }
         );
@@ -771,21 +840,81 @@ function initializeChat() {
 
 
     // =================================================
-    // QUICK QUESTION BUTTONS
+    // ENTER KEY
     // =================================================
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key ===
+                    "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    if (form) {
+
+                        form.dispatchEvent(
+                            new Event(
+                                "submit",
+                                {
+                                    bubbles: true,
+                                    cancelable: true
+                                }
+                            )
+                        );
+
+                    } else {
+
+                        sendQuestion();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =================================================
+    // QUICK QUESTIONS
+    // =================================================
+
+    const quickButtons =
+        document.querySelectorAll(
+            ".quick-question"
+        );
+
 
     quickButtons.forEach(
         function(button) {
 
             button.addEventListener(
                 "click",
-                async function() {
+                async function(event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
 
                     const question =
-                        button.textContent.trim();
+                        button.textContent
+                            .trim();
 
 
-                    if (!question) return;
+                    if (!question) {
+
+                        return;
+
+                    }
 
 
                     if (input) {
@@ -798,33 +927,7 @@ function initializeChat() {
                     }
 
 
-                    // Submit through the same
-                    // chat handler
-
-                    if (form) {
-
-                        if (
-                            typeof form.requestSubmit ===
-                            "function"
-                        ) {
-
-                            form.requestSubmit();
-
-                        } else {
-
-                            handleQuestion(
-                                question
-                            );
-
-                        }
-
-                    } else {
-
-                        handleQuestion(
-                            question
-                        );
-
-                    }
+                    await sendQuestion();
 
                 }
             );
@@ -847,7 +950,9 @@ function initializeChat() {
 function updateYear() {
 
     const year =
-        document.getElementById("year");
+        document.getElementById(
+            "year"
+        );
 
     if (year) {
 
@@ -876,7 +981,10 @@ function initializeMenu() {
         );
 
 
-    if (!menuToggle || !nav) {
+    if (
+        !menuToggle ||
+        !nav
+    ) {
 
         return;
 
@@ -885,7 +993,9 @@ function initializeMenu() {
 
     menuToggle.addEventListener(
         "click",
-        function() {
+        function(event) {
+
+            event.preventDefault();
 
             nav.classList.toggle(
                 "open"
@@ -895,45 +1005,13 @@ function initializeMenu() {
     );
 
 
-    // Close menu after clicking a link
-
     const links =
-        nav.querySelectorAll("a");
+        nav.querySelectorAll(
+            "a"
+        );
 
 
     links.forEach(
         function(link) {
 
-            link.addEventListener(
-                "click",
-                function() {
-
-                    nav.classList.remove(
-                        "open"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-// =====================================================
-// START EVERYTHING
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        initializeChat();
-
-        initializeMenu();
-
-        updateYear();
-
-    }
-);
+            link.addEventListe
