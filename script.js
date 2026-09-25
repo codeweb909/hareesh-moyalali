@@ -12,9 +12,7 @@ const CHATBOT_BACKEND_URL =
 
 function speakMalayalam(text) {
 
-    if (!("speechSynthesis" in window)) {
-        return;
-    }
+    if (!("speechSynthesis" in window)) return;
 
     try {
 
@@ -41,17 +39,20 @@ function speakMalayalam(text) {
             utterance.lang =
                 voice ? voice.lang : "ml-IN";
 
-            if (voice) {
-                utterance.voice = voice;
-            }
+            utterance.voice =
+                voice || null;
 
             utterance.rate = 0.95;
             utterance.pitch = 1;
 
-            window.speechSynthesis.speak(utterance);
+            window.speechSynthesis.speak(
+                utterance
+            );
         };
 
-        if (window.speechSynthesis.getVoices().length > 0) {
+        if (
+            window.speechSynthesis.getVoices().length > 0
+        ) {
 
             speak();
 
@@ -69,7 +70,11 @@ function speakMalayalam(text) {
 
     } catch (error) {
 
-        console.log("Voice error:", error);
+        console.log(
+            "Voice error:",
+            error
+        );
+
     }
 }
 
@@ -81,7 +86,7 @@ function speakMalayalam(text) {
 function getLocalAnswer(question) {
 
     const text =
-        String(question || "")
+        question
             .toLowerCase()
             .trim();
 
@@ -108,6 +113,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഹരീഷ് മായലാലിയുടെ കല്യാണം ഡിസംബർ പന്ത്രണ്ടിനാണ്."
+
         };
     }
 
@@ -134,6 +140,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഡാ ഡാ, നിന്നെ ഒക്കെ ഒത്ത നേരത്തെ ശങ്കു കണ്ട അത്ര! ലോകം ഒന്നും ഇവിടെ ആരും കണ്ടിട്ടില്ല."
+
         };
     }
 
@@ -163,6 +170,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "The bachelor party is from December 6 to December 12."
+
         };
     }
 
@@ -179,6 +187,7 @@ function getLocalAnswer(question) {
         text.includes("where is the wedding") ||
         text.includes("where is the marriage") ||
         text.includes("where is marriage") ||
+        text.includes("where is the wedding location") ||
         text.includes("kalyanam evide") ||
         text.includes("kalyanam evida") ||
         text.includes("kalyanam location") ||
@@ -191,10 +200,11 @@ function getLocalAnswer(question) {
         return {
 
             text:
-                '<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Wedding location: Open Google Maps 📍</a>',
+                'Wedding location: <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Open Google Maps 📍</a>',
 
             speech:
                 "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
+
         };
     }
 
@@ -213,10 +223,11 @@ function getLocalAnswer(question) {
         return {
 
             text:
-                '<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Wedding location: Open Google Maps 📍</a>',
+                'Wedding location: <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Open Google Maps 📍</a>',
 
             speech:
                 "കല്യാണത്തിന്റെ സ്ഥലം ഗൂഗിൾ മാപ്പിൽ കാണാം."
+
         };
     }
 
@@ -228,7 +239,8 @@ function getLocalAnswer(question) {
     if (
         text.includes("who is hareesh") ||
         text.includes("who is hareesh moyalali") ||
-        text.includes("who is moyalali")
+        text.includes("who is moyalali") ||
+        text.includes("hareesh moyalali")
     ) {
 
         return {
@@ -238,6 +250,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "ഹരീഷ് മായലാലി ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക പ്രധാന കഥാപാത്രമാണ്."
+
         };
     }
 
@@ -258,6 +271,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "മിഷൻ അഖണ്ഡ് ഭാരത് ഈ വെബ്സൈറ്റിൽ അവതരിപ്പിച്ചിരിക്കുന്ന ഒരു സാങ്കൽപ്പിക രാഷ്ട്രീയ ആശയമാണ്."
+
         };
     }
 
@@ -278,6 +292,7 @@ function getLocalAnswer(question) {
 
             speech:
                 "മോദി ലവർ ചാപ്റ്റർ ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക ലോകത്തിന്റെ ഭാഗമാണ്."
+
         };
     }
 
@@ -298,7 +313,7 @@ function addMessage(text, type) {
     if (!messages) {
 
         console.error(
-            "Hareesh AI ERROR: chat-messages not found."
+            "ERROR: chat-messages not found."
         );
 
         return;
@@ -311,7 +326,7 @@ function addMessage(text, type) {
         "chat-message " + type;
 
     message.innerHTML =
-        String(text);
+        text;
 
     messages.appendChild(message);
 
@@ -331,9 +346,7 @@ function showThinking() {
     const messages =
         document.getElementById("chat-messages");
 
-    if (!messages) {
-        return;
-    }
+    if (!messages) return;
 
     const thinking =
         document.createElement("div");
@@ -361,10 +374,14 @@ function showThinking() {
 function removeThinking() {
 
     const thinking =
-        document.getElementById("thinking-message");
+        document.getElementById(
+            "thinking-message"
+        );
 
     if (thinking) {
+
         thinking.remove();
+
     }
 }
 
@@ -387,22 +404,16 @@ async function askGoogle(question) {
             question
         );
 
-        console.log(
-            "Google URL:",
-            url
-        );
-
-
         const controller =
             new AbortController();
 
         const timeout =
-            setTimeout(function () {
-
-                controller.abort();
-
-            }, 20000);
-
+            setTimeout(
+                function () {
+                    controller.abort();
+                },
+                20000
+            );
 
         const response =
             await fetch(url, {
@@ -414,49 +425,44 @@ async function askGoogle(question) {
                 cache: "no-store",
 
                 signal: controller.signal
+
             });
 
-
         clearTimeout(timeout);
-
 
         console.log(
             "Google status:",
             response.status
         );
 
-
         if (!response.ok) {
 
             throw new Error(
-                "Google server returned HTTP " +
+                "Google returned HTTP " +
                 response.status
             );
         }
 
-
         const raw =
             await response.text();
-
 
         console.log(
             "Google raw response:",
             raw
         );
 
-
         if (!raw || !raw.trim()) {
 
             return null;
-        }
 
+        }
 
         const cleaned =
             raw.trim();
 
 
         // =================================================
-        // TRY JSON
+        // JSON
         // =================================================
 
         try {
@@ -464,52 +470,60 @@ async function askGoogle(question) {
             const data =
                 JSON.parse(cleaned);
 
-
             console.log(
                 "Google JSON:",
                 data
             );
 
 
-            if (typeof data === "string") {
+            if (
+                typeof data === "string"
+            ) {
 
                 return data;
-            }
 
-
-            if (data.answer) {
-
-                return data.answer;
-            }
-
-
-            if (data.response) {
-
-                return data.response;
-            }
-
-
-            if (data.text) {
-
-                return data.text;
-            }
-
-
-            if (data.result) {
-
-                return data.result;
-            }
-
-
-            if (data.message) {
-
-                return data.message;
             }
 
 
             if (data.reply) {
 
                 return data.reply;
+
+            }
+
+
+            if (data.answer) {
+
+                return data.answer;
+
+            }
+
+
+            if (data.response) {
+
+                return data.response;
+
+            }
+
+
+            if (data.text) {
+
+                return data.text;
+
+            }
+
+
+            if (data.result) {
+
+                return data.result;
+
+            }
+
+
+            if (data.message) {
+
+                return data.message;
+
             }
 
 
@@ -521,6 +535,7 @@ async function askGoogle(question) {
                 );
 
                 return null;
+
             }
 
         } catch (jsonError) {
@@ -528,15 +543,15 @@ async function askGoogle(question) {
             console.log(
                 "Google response is plain text."
             );
+
         }
 
 
         // =================================================
-        // PLAIN TEXT FALLBACK
+        // PLAIN TEXT
         // =================================================
 
         return cleaned;
-
 
     } catch (error) {
 
@@ -546,6 +561,7 @@ async function askGoogle(question) {
         );
 
         return null;
+
     }
 }
 
@@ -559,20 +575,11 @@ async function handleQuestion(question) {
     const cleanQuestion =
         String(question || "").trim();
 
-
     if (!cleanQuestion) {
+
         return;
+
     }
-
-
-    // =================================================
-    // SHOW USER MESSAGE
-    // =================================================
-
-    addMessage(
-        cleanQuestion,
-        "user"
-    );
 
 
     // =================================================
@@ -580,8 +587,9 @@ async function handleQuestion(question) {
     // =================================================
 
     const localAnswer =
-        getLocalAnswer(cleanQuestion);
-
+        getLocalAnswer(
+            cleanQuestion
+        );
 
     if (localAnswer) {
 
@@ -590,14 +598,13 @@ async function handleQuestion(question) {
             "bot"
         );
 
-
         if (localAnswer.speech) {
 
             speakMalayalam(
                 localAnswer.speech
             );
-        }
 
+        }
 
         return;
     }
@@ -609,12 +616,10 @@ async function handleQuestion(question) {
 
     showThinking();
 
-
     const googleAnswer =
         await askGoogle(
             cleanQuestion
         );
-
 
     removeThinking();
 
@@ -626,11 +631,9 @@ async function handleQuestion(question) {
             "bot"
         );
 
-
         speakMalayalam(
             googleAnswer
         );
-
 
         return;
     }
@@ -641,392 +644,4 @@ async function handleQuestion(question) {
     // =================================================
 
     addMessage(
-        "Sorry, Hareesh AI could not connect right now. Please try again.",
-        "bot"
-    );
-}
-
-
-// =====================================================
-// SEND QUESTION
-// =====================================================
-
-async function sendQuestion() {
-
-    const input =
-        document.getElementById("chat-input");
-
-
-    if (!input) {
-
-        console.error(
-            "Hareesh AI ERROR: chat-input not found."
-        );
-
-        return;
-    }
-
-
-    const question =
-        input.value.trim();
-
-
-    if (!question) {
-
-        input.focus();
-
-        return;
-    }
-
-
-    input.value = "";
-
-
-    await handleQuestion(
-        question
-    );
-
-
-    input.focus();
-}
-
-
-// =====================================================
-// INITIALIZE CHAT
-// =====================================================
-
-function initializeChat() {
-
-    console.log(
-        "Hareesh AI chat initializing..."
-    );
-
-
-    const form =
-        document.getElementById("chat-form");
-
-
-    const input =
-        document.getElementById("chat-input");
-
-
-    // =================================================
-    // FORM
-    // =================================================
-
-    if (form) {
-
-        form.addEventListener(
-            "submit",
-            async function(event) {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-
-                const button =
-                    form.querySelector(
-                        'button[type="submit"], input[type="submit"]'
-                    );
-
-
-                if (button) {
-
-                    button.disabled = true;
-
-
-                    if (
-                        button.tagName.toLowerCase() ===
-                        "input"
-                    ) {
-
-                        button.value =
-                            "Sending...";
-
-                    } else {
-
-                        button.textContent =
-                            "Sending...";
-                    }
-                }
-
-
-                try {
-
-                    await sendQuestion();
-
-                } catch (error) {
-
-                    console.error(
-                        "Chat error:",
-                        error
-                    );
-
-
-                    removeThinking();
-
-
-                    addMessage(
-                        "Something went wrong. Please try again.",
-                        "bot"
-                    );
-                }
-
-
-                if (button) {
-
-                    button.disabled = false;
-
-
-                    if (
-                        button.tagName.toLowerCase() ===
-                        "input"
-                    ) {
-
-                        button.value =
-                            "Send";
-
-                    } else {
-
-                        button.textContent =
-                            "Send";
-                    }
-                }
-
-            }
-        );
-
-    } else {
-
-        console.error(
-            "Hareesh AI ERROR: chat-form not found."
-        );
-    }
-
-
-    // =================================================
-    // ENTER KEY
-    // =================================================
-
-    if (input) {
-
-        input.addEventListener(
-            "keydown",
-            function(event) {
-
-                if (
-                    event.key === "Enter" &&
-                    !event.shiftKey
-                ) {
-
-                    event.preventDefault();
-
-
-                    if (form) {
-
-                        if (
-                            typeof form.requestSubmit ===
-                            "function"
-                        ) {
-
-                            form.requestSubmit();
-
-                        } else {
-
-                            form.dispatchEvent(
-                                new Event(
-                                    "submit",
-                                    {
-                                        bubbles: true,
-                                        cancelable: true
-                                    }
-                                )
-                            );
-                        }
-
-                    } else {
-
-                        sendQuestion();
-                    }
-                }
-
-            }
-        );
-
-    } else {
-
-        console.error(
-            "Hareesh AI ERROR: chat-input not found."
-        );
-    }
-
-
-    // =================================================
-    // QUICK QUESTION BUTTONS
-    // =================================================
-
-    const quickButtons =
-        document.querySelectorAll(
-            ".quick-question"
-        );
-
-
-    console.log(
-        "Quick buttons found:",
-        quickButtons.length
-    );
-
-
-    quickButtons.forEach(
-        function(button) {
-
-            button.addEventListener(
-                "click",
-                async function(event) {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-
-                    const question =
-                        button.textContent.trim();
-
-
-                    if (!question) {
-                        return;
-                    }
-
-
-                    if (input) {
-
-                        input.value =
-                            question;
-
-                        input.focus();
-                    }
-
-
-                    await sendQuestion();
-                }
-            );
-        }
-    );
-
-
-    console.log(
-        "Hareesh AI chat initialized successfully."
-    );
-}
-
-
-// =====================================================
-// UPDATE YEAR
-// =====================================================
-
-function updateYear() {
-
-    const year =
-        document.getElementById("year");
-
-
-    if (year) {
-
-        year.textContent =
-            new Date().getFullYear();
-    }
-}
-
-
-// =====================================================
-// MOBILE MENU
-// =====================================================
-
-function initializeMenu() {
-
-    const menuToggle =
-        document.querySelector(".menu-toggle");
-
-
-    const nav =
-        document.querySelector(".nav");
-
-
-    if (!menuToggle || !nav) {
-
-        return;
-    }
-
-
-    menuToggle.addEventListener(
-        "click",
-        function(event) {
-
-            event.preventDefault();
-
-            nav.classList.toggle("open");
-        }
-    );
-
-
-    const links =
-        nav.querySelectorAll("a");
-
-
-    links.forEach(
-        function(link) {
-
-            link.addEventListener(
-                "click",
-                function() {
-
-                    nav.classList.remove("open");
-                }
-            );
-        }
-    );
-}
-
-
-// =====================================================
-// START EVERYTHING
-// =====================================================
-
-function startHareeshAI() {
-
-    console.log(
-        "Hareesh AI starting..."
-    );
-
-
-    initializeChat();
-
-    initializeMenu();
-
-    updateYear();
-
-
-    console.log(
-        "Hareesh AI started successfully."
-    );
-}
-
-
-// =====================================================
-// PAGE LOAD
-// =====================================================
-
-if (
-    document.readyState === "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        startHareeshAI
-    );
-
-} else {
-
-    startHareeshAI();
-}
+        "
