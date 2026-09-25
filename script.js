@@ -188,7 +188,8 @@ function getLocalAnswer(question) {
         text.includes("where is the marriage") ||
         text.includes("where is marriage") ||
         text.includes("where is the wedding location") ||
-        text.includes("kalyanam evide") ||
+text.includes("where is the location of marriage") ||
+text.includes("kalyanam evide") ||
         text.includes("kalyanam evida") ||
         text.includes("kalyanam location") ||
         text.includes("കല്യാണം എവിടെ") ||
