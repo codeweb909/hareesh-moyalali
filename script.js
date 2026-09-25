@@ -497,11 +497,7 @@ async function askGoogle(question) {
             }
 
             // Common response fields
-            if (data.reply) {
-    return data.reply;
-}
-
-if (data.answer) {
+            if (data.answer) {
     return data.answer;
 }
 
