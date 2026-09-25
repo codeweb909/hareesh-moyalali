@@ -1034,7 +1034,6 @@ function startHareeshAI() {
 // =====================================================
 // DOM READY
 // =====================================================
-
 if (
     document.readyState === "loading"
 ) {
@@ -1047,5 +1046,5 @@ if (
 } else {
 
     startHareeshAI();
-    
 
+}
