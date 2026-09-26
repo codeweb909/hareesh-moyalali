@@ -287,82 +287,53 @@
 
 <script src="script.js?v=20260926-2"></script>
 <!-- PUBLIC COMMENTS -->
-<section class="public-comments">
-  <h2>💬 Public Comments</h2>
 
-  <a
-    href="https://docs.google.com/forms/d/e/1FAIpQLSdC3LkNWqC_oRmnnEX5AsXUnbMrG0Thj7RWALwihtIPryTXbw/viewform"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="comment-button"
-  >
-    ✍️ Leave a Public Comment
-  </a>
+  <!-- PUBLIC COMMENTS -->
+<div class="public-comments">
+  <h2>Public Comments</h2>
 
-  <div id="public-comments-list">
+  <div id="comments-list">
     <p>Loading comments...</p>
   </div>
-</section>
+</div>
 
 <style>
-.public-comments {
-  margin: 30px auto;
-  padding: 24px;
-  max-width: 700px;
-  text-align: center;
-}
+  .public-comments {
+    margin: 30px 0;
+    padding: 20px;
+  }
 
-.public-comments h2 {
-  margin-bottom: 18px;
-}
+  .public-comments h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-.comment-button {
-  display: inline-block;
-  padding: 12px 22px;
-  margin-bottom: 24px;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 600;
-}
+  .comment-card {
+    background: #f3eee6;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 12px;
+  }
 
-#public-comments-list {
-  text-align: left;
-}
+  .comment-name {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
 
-.public-comment {
-  padding: 16px;
-  margin: 12px 0;
-  border-radius: 14px;
-  background: #f1eee8;
-}
-
-.public-comment-name {
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.public-comment-text {
-  line-height: 1.5;
-}
+  .comment-text {
+    line-height: 1.5;
+  }
 </style>
 
 <script>
-const GOOGLE_SHEET_ID =
-  "1rNZK8dlJXK3aw6lGooBpjcCa3qxFptdMvQ1Y3QDKEAo";
-
-const GOOGLE_SHEET_NAME = "Form Responses 1";
-
 async function loadPublicComments() {
-  const commentsBox = document.getElementById("public-comments-list");
+  const sheetUrl =
+    "https://docs.google.com/spreadsheets/d/1rNZK8dlJXK3aw6lGooBpjcCa3qxFptdMvQ1Y3QDKEAo/gviz/tq?tqx=out:json&sheet=Form%20Responses%201";
+
+  const container = document.getElementById("comments-list");
 
   try {
-    const url =
-      "https://docs.google.com/spreadsheets/d/" +
-      GOOGLE_SHEET_ID +
-      "/gviz/tq?tqx=out:json&sheet=" +
-      encodeURIComponent(GOOGLE_SHEET_NAME);
-
-    const response = await fetch(url);
+    const response = await fetch(sheetUrl);
     const text = await response.text();
 
     const jsonText = text.substring(
@@ -372,60 +343,47 @@ async function loadPublicComments() {
 
     const data = JSON.parse(jsonText);
 
-    const rows = data.table.rows || [];
+    container.innerHTML = "";
+
+    const rows = data.table.rows;
 
     if (!rows.length) {
-      commentsBox.innerHTML =
-        "<p>No comments yet. Be the first to leave one!</p>";
+      container.innerHTML = "<p>No comments yet.</p>";
       return;
     }
 
-    const comments = rows
-      .map(row => row.c || [])
-      .map(cells => ({
-        name: cells[1]?.v || "Anonymous",
-        comment: cells[2]?.v || ""
-      }))
-      .filter(item => item.comment.trim() !== "")
-      .reverse()
-      .slice(0, 20);
+    rows.reverse().forEach(row => {
+      const name = row.c[0]?.v || "Anonymous";
+      const comment = row.c[1]?.v || "";
 
-    if (!comments.length) {
-      commentsBox.innerHTML =
-        "<p>No comments yet. Be the first to leave one!</p>";
-      return;
-    }
+      const card = document.createElement("div");
+      card.className = "comment-card";
 
-    commentsBox.innerHTML = "";
+      const nameElement = document.createElement("div");
+      nameElement.className = "comment-name";
+      nameElement.textContent = name;
 
-    comments.forEach(item => {
-      const comment = document.createElement("div");
-      comment.className = "public-comment";
+      const commentElement = document.createElement("div");
+      commentElement.className = "comment-text";
+      commentElement.textContent = comment;
 
-      const name = document.createElement("div");
-      name.className = "public-comment-name";
-      name.textContent = "👤 " + item.name;
+      card.appendChild(nameElement);
+      card.appendChild(commentElement);
 
-      const message = document.createElement("div");
-      message.className = "public-comment-text";
-      message.textContent = item.comment;
-
-      comment.appendChild(name);
-      comment.appendChild(message);
-
-      commentsBox.appendChild(comment);
+      container.appendChild(card);
     });
 
   } catch (error) {
     console.error("Comments loading error:", error);
-
-    commentsBox.innerHTML =
+    container.innerHTML =
       "<p>Comments are temporarily unavailable.</p>";
   }
 }
 
 loadPublicComments();
 </script>
+
+
 </body>
   
 </html>
