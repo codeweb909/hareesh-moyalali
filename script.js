@@ -136,10 +136,10 @@ function getLocalAnswer(question) {
         return {
 
             text:
-                "Da da ninne okke otha nerathe Shanku kanda atra! Lokam onnum ivde arum kandit illa",
+                "Da da ninne okke  Shanku kanda atra! Lokam onnum ivde arum kandit illa",
 
             speech:
-                "ഡാ ഡാ, നിന്നെ ഒക്കെ ഒത്ത നേരത്തെ ശങ്കു കണ്ട അത്ര! ലോകം ഒന്നും ഇവിടെ ആരും കണ്ടിട്ടില്ല."
+                "ഡാ ഡാ, നിന്നെ ഒക്കെ  ശങ്കു കണ്ട അത്ര! ലോകം ഒന്നും ഇവിടെ ആരും കണ്ടിട്ടില്ല."
 
         };
     }
@@ -246,13 +246,13 @@ text.includes("kalyanam evide") ||
 
         return {
 
-            text:
-                "Hareesh Moyalali is the fictional central character of this website and the imagined Empire of Everything.",
+    text:
+        "Hareesh Lal, alias Hareesh Moyalali, is a business-management and technology enthusiast influencer from Alappuzha, with reach across Idukki, Alappuzha, and Kochi. There are also unverified reports and rumors alleging that he has business interests in Ireland through a supposed nominee.",
 
-            speech:
-                "ഹരീഷ് മായലാലി ഈ വെബ്സൈറ്റിലെ സാങ്കൽപ്പിക പ്രധാന കഥാപാത്രമാണ്."
+    speech:
+        "ഹരീഷ് ലാൽ, ഹരീഷ് മായലാലി എന്ന പേരിലും അറിയപ്പെടുന്നു. ആലപ്പുഴയിൽ നിന്നുള്ള ബിസിനസ് മാനേജ്മെന്റിലും ടെക്നോളജിയിലും താൽപ്പര്യമുള്ള ഇൻഫ്ലുവൻസറാണ്. ഇടുക്കി, ആലപ്പുഴ, കൊച്ചി എന്നിവിടങ്ങളിലും അദ്ദേഹത്തിന് സ്വാധീനമുണ്ട്. അയർലൻഡിലെ ബിസിനസ് താൽപ്പര്യങ്ങളെക്കുറിച്ച് സ്ഥിരീകരിക്കാത്ത റിപ്പോർട്ടുകളും അഭ്യൂഹങ്ങളും നിലവിലുണ്ട്."
 
-        };
+};
     }
 
 
